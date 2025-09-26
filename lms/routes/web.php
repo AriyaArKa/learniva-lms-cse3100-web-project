@@ -30,6 +30,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 });
 
 
+Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.login');
+
+
 ////instructor group middleware
 Route::middleware(['auth', 'role:instructor'])->group(function () {
     Route::get('/instructor/dashboard', [InstructorController::class, 'InstructorDashboard'])->name('instructor.dashboard');
