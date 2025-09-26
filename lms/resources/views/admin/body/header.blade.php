@@ -21,7 +21,7 @@
                     </li>
                     <li class="nav-item dropdown dropdown-laungauge d-none d-sm-flex">
                         <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="avascript:;"
-                            data-bs-toggle="dropdown"><img src="assets/images/county/02.png" width="22" alt="">
+                            data-bs-toggle="dropdown"><img src="{{ asset('backend/assets/images/county/02.png') }}" width="22" alt="">
                         </a>
                     </li>
                     <li class="nav-item dark-mode d-none d-sm-flex">
@@ -46,7 +46,7 @@
                                 <a class="dropdown-item" href="javascript:;">
                                     <div class="d-flex align-items-center">
                                         <div class="user-online">
-                                            <img src="assets/images/avatars/avatar-1.png" class="msg-avatar"
+                                            <img src="{{ asset('backend/assets/images/avatars/avatar-1.png') }}" class="msg-avatar"
                                                 alt="user avatar">
                                         </div>
                                         <div class="flex-grow-1">
@@ -71,7 +71,7 @@
                                 <a class="dropdown-item" href="javascript:;">
                                     <div class="d-flex align-items-center">
                                         <div class="user-online">
-                                            <img src="assets/images/avatars/avatar-2.png" class="msg-avatar"
+                                            <img src="{{ asset('backend/assets/images/avatars/avatar-2.png') }}" class="msg-avatar"
                                                 alt="user avatar">
                                         </div>
                                         <div class="flex-grow-1">
@@ -84,7 +84,7 @@
                                 <a class="dropdown-item" href="javascript:;">
                                     <div class="d-flex align-items-center">
                                         <div class="notify bg-light-success text-success">
-                                            <img src="assets/images/app/outlook.png" width="25" alt="user avatar">
+                                            <img src="{{ asset('backend/assets/images/app/outlook.png') }}" width="25" alt="user avatar">
                                         </div>
                                         <div class="flex-grow-1">
                                             <h6 class="msg-name">Account Created<span class="msg-time float-end">28 min
@@ -107,7 +107,7 @@
                                 <a class="dropdown-item" href="javascript:;">
                                     <div class="d-flex align-items-center">
                                         <div class="user-online">
-                                            <img src="assets/images/avatars/avatar-4.png" class="msg-avatar"
+                                            <img src="{{ asset('backend/assets/images/avatars/avatar-4.png') }}" class="msg-avatar"
                                                 alt="user avatar">
                                         </div>
                                         <div class="flex-grow-1">
@@ -133,7 +133,7 @@
                                 <a class="dropdown-item" href="javascript:;">
                                     <div class="d-flex align-items-center">
                                         <div class="notify bg-light-primary">
-                                            <img src="assets/images/app/github.png" width="25" alt="user avatar">
+                                            <img src="{{ asset('backend/assets/images/app/github.png') }}" width="25" alt="user avatar">
                                         </div>
                                         <div class="flex-grow-1">
                                             <h6 class="msg-name">New 24 authors<span class="msg-time float-end">1 day
@@ -145,7 +145,7 @@
                                 <a class="dropdown-item" href="javascript:;">
                                     <div class="d-flex align-items-center">
                                         <div class="user-online">
-                                            <img src="assets/images/avatars/avatar-8.png" class="msg-avatar"
+                                            <img src="{{ asset('backend/assets/images/avatars/avatar-8.png') }}" class="msg-avatar"
                                                 alt="user avatar">
                                         </div>
                                         <div class="flex-grow-1">
@@ -181,7 +181,7 @@
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="position-relative">
                                             <div class="cart-product rounded-circle bg-light">
-                                                <img src="assets/images/products/11.png" class="" alt="product image">
+                                                <img src="{{ asset('backend/assets/images/products/11.png') }}" class="" alt="product image">
                                             </div>
                                         </div>
                                         <div class="flex-grow-1">
@@ -199,7 +199,7 @@
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="position-relative">
                                             <div class="cart-product rounded-circle bg-light">
-                                                <img src="assets/images/products/02.png" class="" alt="product image">
+                                                <img src="{{ asset('backend/assets/images/products/02.png') }}" class="" alt="product image">
                                             </div>
                                         </div>
                                         <div class="flex-grow-1">
@@ -217,7 +217,7 @@
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="position-relative">
                                             <div class="cart-product rounded-circle bg-light">
-                                                <img src="assets/images/products/03.png" class="" alt="product image">
+                                                <img src="{{ asset('backend/assets/images/products/03.png') }}" class="" alt="product image">
                                             </div>
                                         </div>
                                         <div class="flex-grow-1">
@@ -235,7 +235,7 @@
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="position-relative">
                                             <div class="cart-product rounded-circle bg-light">
-                                                <img src="assets/images/products/04.png" class="" alt="product image">
+                                                <img src="{{ asset('backend/assets/images/products/04.png') }}" class="" alt="product image">
                                             </div>
                                         </div>
                                         <div class="flex-grow-1">
@@ -365,13 +365,13 @@
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
+                    <li><a class="dropdown-item d-flex align-items-center" href="{{ route('admin.profile') }}"><i
                                 class="bx bx-user fs-5"></i><span>Profile</span></a>
                     </li>
-                    <li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
+                    <li><a class="dropdown-item d-flex align-items-center" href="{{ route('admin.settings') }}"><i
                                 class="bx bx-cog fs-5"></i><span>Settings</span></a>
                     </li>
-                    <li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
+                    <li><a class="dropdown-item d-flex align-items-center" href="{{ route('admin.dashboard') }}"><i
                                 class="bx bx-home-circle fs-5"></i><span>Dashboard</span></a>
                     </li>
                     <li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
