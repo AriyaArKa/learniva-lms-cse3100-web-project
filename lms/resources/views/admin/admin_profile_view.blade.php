@@ -58,78 +58,103 @@
                     </div>
                     <div class="col-lg-8">
                         <div class="card">
-                            <div class="card-body">
-                                <div class="row mb-3">
-                                    <div class="col-sm-3">
-                                        <h6 class="mb-0">Name</h6>
+                            <form method="POST" action="{{ route('admin.profile.store') }}" enctype="multipart/form-data">
+                                @csrf
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Name</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <input type="text" class="form-control" name="name"
+                                                value="{{ $profileData->name }}" required />
+                                            @error('name')
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                     </div>
-                                    <div class="col-sm-9 text-secondary">
-                                        <input type="text" class="form-control" name="name"
-                                            value="{{ $profileData->name }}" />
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">User Name</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <input type="text" class="form-control" name="username"
+                                                value="{{ $profileData->username }}" required />
+                                            @error('username')
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-3">
-                                        <h6 class="mb-0">User Name</h6>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Email</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <input type="email" class="form-control" name="email"
+                                                value="{{ $profileData->email }}" required />
+                                            @error('email')
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                     </div>
-                                    <div class="col-sm-9 text-secondary">
-                                        <input type="text" class="form-control" name="username"
-                                            value="{{ $profileData->username }}" />
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Phone</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <input type="tel" class="form-control" name="phone"
+                                                value="{{ $profileData->phone }}" />
+                                            @error('phone')
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-3">
-                                        <h6 class="mb-0">Email</h6>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Address</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <input type="text" class="form-control" name="address"
+                                                value="{{ $profileData->address }}" />
+                                            @error('address')
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                     </div>
-                                    <div class="col-sm-9 text-secondary">
-                                        <input type="text" class="form-control" value="{{ $profileData->email }}" />
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Profile Image</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <input class="form-control" type="file" name="photo" id="image"
+                                                accept="image/*" />
+                                            @error('photo')
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-3">
-                                        <h6 class="mb-0">Phone</h6>
-                                    </div>
-                                    <div class="col-sm-9 text-secondary">
-                                        <input type="text" class="form-control" value="{{ $profileData->phone }}" />
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-3">
-                                        <h6 class="mb-0">Address</h6>
-                                    </div>
-                                    <div class="col-sm-9 text-secondary">
-                                        <input type="text" class="form-control" value="{{ $profileData->address }}" />
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-3">
-                                        <h6 class="mb-0">Profile Image</h6>
-                                    </div>
-                                    <div class="col-sm-9 text-secondary">
-                                        <input class="form-control" type="file" name="photo" id="image" />
-                                    </div>
-                                </div>
 
-                                <div class="row mb-3">
-                                    <div class="col-sm-3">
-                                        <h6 class="mb-0"></h6>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0"></h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <img id="showImage"
+                                                src="{{ (!empty($profileData->photo)) ? url('upload/admin_images/' . $profileData->photo) : url('upload/no_image.jpg') }}"
+                                                alt="Admin" class="rounded-circle p-1 bg-primary" width="80">
+                                        </div>
                                     </div>
-                                    <div class="col-sm-9 text-secondary">
-                                        <img id="showImage"
-                                            src="{{ (!empty($profileData->photo)) ? url('upload/admin_images/' . $profileData->photo) : url('upload/no_image.jpg') }}"
-                                            alt="Admin" class="rounded-circle p-1 bg-primary" width="80">
+
+
+
+                                    <div class="row">
+                                        <div class="col-sm-3"></div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <input type="submit" class="btn btn-primary px-4" value="Save Changes" />
+                                        </div>
                                     </div>
                                 </div>
-
-
-
-                                <div class="row">
-                                    <div class="col-sm-3"></div>
-                                    <div class="col-sm-9 text-secondary">
-                                        <input type="button" class="btn btn-primary px-4" value="Save Changes" />
-                                    </div>
-                                </div>
-                            </div>
+                            </form>
                         </div>
 
                     </div>

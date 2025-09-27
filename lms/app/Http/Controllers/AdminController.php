@@ -25,21 +25,69 @@ class AdminController extends Controller
     } //end method
 
 
-    public function AdminLogin() {
+    public function AdminLogin()
+    {
         return view('admin.admin_login');
-        
     }
 
-    public function AdminProfile() {
+    public function AdminProfile()
+    {
         $id = Auth::user()->id;
         $profileData = User::find($id);
         return view('admin.admin_profile_view', compact('id', 'profileData'));
     }
 
-    public function AdminSettings() {
+    public function AdminSettings()
+    {
         return view('admin.admin_settings');
-        
     }
 
+    public function AdminProfileStore(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . Auth::id(),
+            'username' => 'required|string|max:255|unique:users,username,' . Auth::id(),
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:500',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
 
+        $id = Auth::user()->id;
+        $data = User::find($id);
+
+        // Check if user exists
+        if (!$data) {
+            $notification = array(
+                'message' => 'User not found.',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        // Only update if the values are not null or empty
+        $data->name = $request->filled('name') ? $request->name : $data->name;
+        $data->email = $request->filled('email') ? $request->email : $data->email;
+        $data->username = $request->filled('username') ? $request->username : $data->username;
+        $data->phone = $request->filled('phone') ? $request->phone : $data->phone;
+        $data->address = $request->filled('address') ? $request->address : $data->address;
+
+        if ($request->file('photo')) {
+            // Delete old photo if it exists
+            if ($data->photo && file_exists(public_path('upload/admin_images/' . $data->photo))) {
+                unlink(public_path('upload/admin_images/' . $data->photo));
+            }
+            $file = $request->file('photo');
+            $filename = date('YmdHi') . $file->getClientOriginalName();
+            $file->move(public_path('upload/admin_images'), $filename);
+            $data->photo = $filename;
+        }
+        $data->save();
+        $notification = array(
+            'message' => 'Admin Profile Updated Successfully!',
+            'alert-type' => 'success'
+        );
+        return redirect()->back()->with($notification);
+    }
 }
