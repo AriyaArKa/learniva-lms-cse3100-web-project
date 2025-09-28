@@ -37,9 +37,11 @@ class AdminController extends Controller
         return view('admin.admin_profile_view', compact('id', 'profileData'));
     }
 
-    public function AdminSettings()
+    public function AdminChangePassword()
     {
-        return view('admin.admin_settings');
+        $id = Auth::user()->id;
+        $profileData = User::find($id);
+        return view('admin.admin_change_password', compact('id', 'profileData'));
     }
 
     public function AdminProfileStore(Request $request)
