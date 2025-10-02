@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="{{ asset('frontend/css/bootstrap-select.min.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/css/fancybox.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
     <!-- end inject -->
 </head>
 
@@ -120,6 +121,79 @@
     <script src="{{ asset('frontend/js/animated-skills.js') }}"></script>
     <script src="{{ asset('frontend/js/jquery.MultiFile.min.js') }}"></script>
     <script src="{{ asset('frontend/js/main.js') }}"></script>
+
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        // Toastr configuration
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+
+        $('<style>')
+            .prop('type', 'text/css')
+            .html(`
+        #toast-container > .toast {
+                margin-top: 45px !important;
+                min-width: 350px !important;
+                max-width: none !important;
+                width: auto !important;
+                padding: 15px 15px 15px 50px !important;
+        }
+            .toast-top-right {
+                top: 45px !important;
+                right: 6px !important;
+        }
+            .toast-message {
+                white-space: nowrap !important;
+                overflow: visible !important;
+                text-overflow: clip !important;
+                font-size: 14px !important;
+                line-height: 1.4 !important;
+            }
+            .toast-success {
+                background-color: #51A351 !important;
+            }
+            `)
+            .appendTo('head');
+
+
+        @if(Session::has('message'))
+            var type = "{{ Session::get('alert-type', 'info') }}"
+            switch (type) {
+                case 'info':
+                    toastr.info(" {{ Session::get('message') }} ");
+                    break;
+
+                case 'success':
+                    toastr.success(" {{ Session::get('message') }} ");
+                    break;
+
+                case 'warning':
+                    toastr.warning(" {{ Session::get('message') }} ");
+                    break;
+
+                case 'error':
+                    toastr.error(" {{ Session::get('message') }} ");
+                    break;
+            }
+        @endif 
+    </script>
 </body>
 
 </html>

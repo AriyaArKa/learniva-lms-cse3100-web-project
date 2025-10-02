@@ -20,9 +20,10 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('user/profile', [UserController::class, 'UserProfile'])->name('user.profile');
+    Route::post('user/profile/update', [UserController::class, 'UserProfileUpdate'])->name('user.profile.update');
+
+    
 });
 
 require __DIR__ . '/auth.php';
@@ -59,3 +60,5 @@ Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin']
 Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/user/dashboard', [UserController::class, 'UserDashboard'])->name('user.dashboard');
 });
+
+
