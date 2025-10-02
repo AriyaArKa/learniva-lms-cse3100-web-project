@@ -82,5 +82,41 @@ class UserController extends Controller
         );
         return redirect()->back()->with($notification);
     }
+
+    public function UserChangePassword()
+    {
+        $id = Auth::user()->id;
+        $profileData = User::find($id);
+        return view('frontend.dashboard.change_password', compact('id', 'profileData'));
+    }
+
+    public function UserPasswordUpdate(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'old_password' => 'required',
+            'new_password' => 'required|confirmed',
+        ]);
+
+        // Check if the old password matches
+        if (!Hash::check($request->old_password, auth::user()->password)) {
+            $notification = array(
+                'message' => 'Old Password Does not Match!',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        // Update the new password
+        User::whereId(auth::user()->id)->update([
+            'password' => Hash::make($request->new_password)
+        ]);
+
+        $notification = array(
+            'message' => 'Password Changed Successfully!',
+            'alert-type' => 'success'
+        );
+        return back()->with($notification);
+    }
     
 }
