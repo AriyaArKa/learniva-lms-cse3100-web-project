@@ -3,8 +3,8 @@
 
 
     <!-- ================================
-                START BREADCRUMB AREA
-            ================================= -->
+                    START BREADCRUMB AREA
+                ================================= -->
     <section class="breadcrumb-area section-padding img-bg-2">
         <div class="overlay"></div>
         <div class="container">
@@ -22,12 +22,12 @@
         </div><!-- end container -->
     </section><!-- end breadcrumb-area -->
     <!-- ================================
-                END BREADCRUMB AREA
-            ================================= -->
+                    END BREADCRUMB AREA
+                ================================= -->
 
     <!-- ================================
-                   START CONTACT AREA
-            ================================= -->
+                       START CONTACT AREA
+                ================================= -->
     <section class="contact-area section--padding position-relative">
         <span class="ring-shape ring-shape-1"></span>
         <span class="ring-shape ring-shape-2"></span>
@@ -60,17 +60,22 @@
                                 <div class="input-box">
                                     <label class="label-text">Email or Username</label>
                                     <div class="form-group">
-                                        <input class="form-control form--control" id="email" type="email" name="email"
-                                            placeholder="Email or Username">
+                                        <input class="form-control form--control @error('email') is-invalid @enderror"
+                                            id="email" type="email" name="email" placeholder="Email or Username"
+                                            value="{{ old('email') }}" required>
                                         <span class="la la-user input-icon"></span>
                                     </div>
+                                    @error('email')
+                                        <span class="text-danger fs-14">{{ $message }}</span>
+                                    @enderror
                                 </div><!-- end input-box -->
                                 <div class="input-box">
                                     <label class="label-text">Password</label>
                                     <div class="input-group mb-3">
                                         <span class="la la-lock input-icon"></span>
-                                        <input class="form-control form--control password-field" id="password"
-                                            type="password" name="password" placeholder="Password">
+                                        <input
+                                            class="form-control form--control password-field @error('password') is-invalid @enderror"
+                                            id="password" type="password" name="password" placeholder="Password" required>
                                         <div class="input-group-append">
                                             <button class="btn theme-btn theme-btn-transparent toggle-password"
                                                 type="button">
@@ -90,6 +95,9 @@
                                             </button>
                                         </div>
                                     </div>
+                                    @error('password')
+                                        <span class="text-danger fs-14">{{ $message }}</span>
+                                    @enderror
                                 </div><!-- end input-box -->
                                 <div class="btn-box">
                                     <div class="d-flex align-items-center justify-content-between pb-4">
@@ -115,8 +123,8 @@
         </div><!-- end container -->
     </section><!-- end contact-area -->
     <!-- ================================
-                   END CONTACT AREA
-            ================================= -->
+                       END CONTACT AREA
+                ================================= -->
 
 
 @endsection
