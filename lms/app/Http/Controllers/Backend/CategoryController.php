@@ -13,15 +13,12 @@ class CategoryController extends Controller
         $category = Category::latest()->get();
         return view('admin.backend.category.all_category', compact('category'));
     }
-
-
     // Return all categories
-
-
-    // public function AddCategory()
-    // {
-    //     // Return the view to add a new category
-    // }
+    public function AddCategory()
+    {
+        // Return the view to add a new category
+        return view('admin.backend.category.add_category');
+    }
 
     // public function StoreCategory(Request $request)
     // {
