@@ -267,6 +267,9 @@
     <!-- data table js -->
     <script src="{{ asset('backend/assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('backend/assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
+
+
+
     <script>
         $(document).ready(function () {
             $('#example').DataTable();
@@ -274,10 +277,13 @@
     </script>
     <!-- end data table js -->
 
+    <script src="{{ asset('backend/assets/js/app.js') }}"></script>
 
 
     <!--app JS-->
-    <script src="{{ asset('backend/assets/js/app.js') }}"></script>
+    <script src="{{ asset('backend/assets/js/validate.min.js') }}"></script>
+
+    
     <script>
         new PerfectScrollbar(".app-container")
     </script>

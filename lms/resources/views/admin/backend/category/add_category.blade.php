@@ -23,9 +23,10 @@
         <div class="card">
             <div class="card-body p-4">
                 <h5 class="mb-4">Add Category</h5>
-                <form class="row g-3">
+                <form id="myForm" action="" method="post" class="row g-3">
+                    @csrf
 
-                    <div class="col-md-6">
+                    <div class="form-group col-md-6">
                         <label for="input1" class="form-label">Category Name</label>
                         <input type="text" class="form-control" name="category_name" id="input1"
                             placeholder="Category Name">
@@ -35,9 +36,9 @@
 
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="form-group col-md-6">
                         <label for="input2" class="form-label">Category Image</label>
-                        <input class="form-control" type="file" name="category_image" id="image">
+                        <input class="form-control" name="image" type="file" name="category_image" id="image">
                     </div>
 
                     <div class="col-md-6">
@@ -57,6 +58,45 @@
 
 
     </div>
+
+    <script type="text/javascript">
+    $(document).ready(function (){
+        $('#myForm').validate({
+            rules: {
+                category_name: {
+                    required : true,
+                }, 
+                image: {
+                    required : true,
+                }, 
+
+                
+            },
+            messages :{
+                category_name: {
+                    required : 'Please Enter Category Name',
+                }, 
+                image: {
+                    required : 'Please Select Category Image',
+                }, 
+                 
+
+            },
+            errorElement : 'span', 
+            errorPlacement: function (error,element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight : function(element, errorClass, validClass){
+                $(element).addClass('is-invalid');
+            },
+            unhighlight : function(element, errorClass, validClass){
+                $(element).removeClass('is-invalid');
+            },
+        });
+    });
+    
+</script>
 
     <script type="text/javascript">
         $(document).ready(function () {
