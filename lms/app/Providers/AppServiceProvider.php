@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Facade;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Register Image facade alias
+        if (!class_exists('Image')) {
+            class_alias(\Intervention\Image\Laravel\Facades\Image::class, 'Image');
+        }
     }
 }
