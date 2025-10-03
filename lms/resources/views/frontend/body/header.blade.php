@@ -56,7 +56,6 @@
 
 @endauth
 
-                            
                         </ul>
                     </div><!-- end header-widget -->
                 </div><!-- end col-lg-6 -->
