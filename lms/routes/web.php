@@ -26,9 +26,6 @@ Route::middleware('auth')->group(function () {
     Route::post('user/profile/update', [UserController::class, 'UserProfileUpdate'])->name('user.profile.update');
     Route::get('user/change/password', [UserController::class, 'UserChangePassword'])->name('user.change.password');
     Route::post('user/password/update', [UserController::class, 'UserPasswordUpdate'])->name('user.password.update');
-
-
-    
 });
 
 require __DIR__ . '/auth.php';
@@ -45,27 +42,34 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 
     //category all routes
-    Route::controller(CategoryController::class)->group(function(){
+    Route::controller(CategoryController::class)->group(function () {
         Route::get('/all/category', 'AllCategory')->name('all.category');
         Route::get('/add/category', 'AddCategory')->name('add.category');
         Route::post('/store/category', 'StoreCategory')->name('store.category');
         Route::get('/edit/category/{id}', 'EditCategory')->name('edit.category');
         Route::post('/update/category', 'UpdateCategory')->name('update.category');
         Route::get('/delete/category/{id}', 'DeleteCategory')->name('delete.category');
-   });
-   // end category all routes
+    });
+    // end category all routes
 
-   //sub category all routes
-    Route::controller(CategoryController::class)->group(function(){
+
+    //sub category all routes
+    Route::controller(CategoryController::class)->group(function () {
         Route::get('/all/subcategory', 'AllSubCategory')->name('all.subcategory');
         Route::get('/add/subcategory', 'AddSubCategory')->name('add.subcategory');
         Route::post('/store/subcategory', 'StoreSubCategory')->name('store.subcategory');
         Route::get('/edit/subcategory/{id}', 'EditSubCategory')->name('edit.subcategory');
         Route::post('/update/subcategory', 'UpdateSubCategory')->name('update.subcategory');
         Route::get('/delete/subcategory/{id}', 'DeleteSubCategory')->name('delete.subcategory');
-   });
-   // end category all routes
+    });
+    // end category all routes
 
+
+    // instructor all routes
+    Route::controller(AdminController::class)->group(function () {
+        Route::get('/all/instructor', 'AllInstructor')->name('all.instructor');
+    });
+    // end instructor all routes
 
 });
 // end admin group middleware
@@ -83,7 +87,6 @@ Route::middleware(['auth', 'role:instructor'])->group(function () {
     Route::post('/instructor/profile/store', [InstructorController::class, 'InstructorProfileStore'])->name('instructor.profile.store');
     Route::get('/instructor/change/password', [InstructorController::class, 'InstructorChangePassword'])->name('instructor.change.password');
     Route::post('/instructor/password/update', [InstructorController::class, 'InstructorPasswordUpdate'])->name('instructor.password.update');
-
 });
 Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin'])->name('instructor.login');
 
@@ -92,5 +95,3 @@ Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin']
 Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/user/dashboard', [UserController::class, 'UserDashboard'])->name('user.dashboard');
 });
-
-

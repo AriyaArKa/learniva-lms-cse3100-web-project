@@ -130,9 +130,10 @@ class AdminController extends Controller
     public function BecomeInstructor()
     {
         return view('frontend.instructor.reg_instructor');
-    }//end method
+    } //end method
 
-    public function InstructorRegister(Request $request){
+    public function InstructorRegister(Request $request)
+    {
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
@@ -148,15 +149,22 @@ class AdminController extends Controller
             'role' => 'instructor',
             'status' => '0',
         ]);
-        
+
         $notification = array(
             'message' => 'Instructor Registered Successfully!',
             'alert-type' => 'success'
         );
         return redirect()->route('instructor.login')->with($notification);
+    } //end method
 
-    }//end method
 
+
+    //all instructor method
+    public function AllInstructor()
+    {
+        $allinstructor = User::where('role', 'instructor')->latest()->get();
+        return view('admin.backend.instructor.all_instructor', compact('allinstructor'));
+    } //end method
 
 
 }
