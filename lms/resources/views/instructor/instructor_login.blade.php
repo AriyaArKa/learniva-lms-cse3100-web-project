@@ -20,6 +20,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link href="{{ asset('backend/assets/css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('backend/assets/css/icons.css') }}" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+
+
+
+
     <title>Instructor Login</title>
 </head>
 
@@ -71,13 +77,14 @@
                                             <div class="col-12">
                                                 <label for="inputChoosePassword" class="form-label">Password</label>
                                                 <div class="input-group" id="show_hide_password">
-                                                    <input type="password" class="form-control @error('password') is-invalid @enderror border-end-0"
+                                                    <input type="password"
+                                                        class="form-control @error('password') is-invalid @enderror border-end-0"
                                                         id="password" name="password" placeholder="Enter Password"> <a
                                                         href="javascript:;" class="input-group-text bg-transparent"><i
                                                             class="bx bx-hide"></i></a>
-                                                            @error('password')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
+                                                    @error('password')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -163,6 +170,33 @@
     </script>
     <!--app JS-->
     <script src="{{ asset('backend/assets/js/app.js') }}"></script>
+
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        @if(Session::has('message'))
+            var type = "{{ Session::get('alert-type', 'info') }}"
+            switch (type) {
+                case 'info':
+                    toastr.info(" {{ Session::get('message') }} ");
+                    break;
+
+                case 'success':
+                    toastr.success(" {{ Session::get('message') }} ");
+                    break;
+
+                case 'warning':
+                    toastr.warning(" {{ Session::get('message') }} ");
+                    break;
+
+                case 'error':
+                    toastr.error(" {{ Session::get('message') }} ");
+                    break;
+            }
+        @endif 
+    </script>
+
+
 </body>
 
 </html>
