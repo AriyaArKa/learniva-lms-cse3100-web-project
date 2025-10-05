@@ -71,6 +71,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 // end admin group middleware
 
 Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.login');
+Route::get('/become/instructor', [AdminController::class, 'BecomeInstructor'])->name('become.instructor');
 
 
 ////instructor group middleware

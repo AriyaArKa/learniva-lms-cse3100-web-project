@@ -123,4 +123,12 @@ class AdminController extends Controller
         );
         return redirect()->back()->with($notification);
     }
+
+    public function BecomeInstructor()
+    {
+        return view('frontend.instructor.reg_instructor');
+    }//end method
+
+
+
 }
