@@ -168,26 +168,19 @@ class AdminController extends Controller
 
 
     //update user status method
-    public function UserStatusUpdate(Request $request)
+    public function UpdateUserStatus(Request $request)
     {
-        $userId = $request->user_id;
-        $isChecked = $request->is_checked;
+        $userId = $request->input('user_id');
+        $isChecked = $request->input('is_checked', 0);
         $user = User::find($userId);
 
         if ($user) {
             $user->status = $isChecked;
             $user->save();
-
-            return response()->json([
-                'success' => true,
-                'status' => $user->status,
-                'message' => 'Status updated successfully'
-            ]);
         }
 
         return response()->json([
-            'success' => false,
-            'message' => 'User not found'
+            'message' => 'User Status updated successfully'
         ]);
     } //end method
 

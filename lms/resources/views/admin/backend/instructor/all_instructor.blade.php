@@ -10,7 +10,7 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
-    
+
     <div class="page-content">
         <!--breadcrumb-->
         <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
@@ -100,8 +100,8 @@
                     success: function(response){
                         toastr.success(response.message);
                     },
-                    error:function(xhr, status, error){
-                        toastr.error('An error occurred while updating status.');
+                    error:function(){
+                        
                     }
                 });
             });
