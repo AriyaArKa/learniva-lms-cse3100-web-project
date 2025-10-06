@@ -114,8 +114,43 @@
 
                     <div class="form-group col-md-12">
                         <label for="input1" class="form-label">Course Prerequisites </label>
-                        <textarea name="prerequisites" class="form-control" id="input11" placeholder="Address ..."
+                        <textarea name="prerequisites" class="form-control" id="input11" placeholder="Prerequisites ..."
                             rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        <label for="input1" class="form-label">Course Description </label>
+                        <textarea name="description" class="form-control" id="myeditorinstance"></textarea>
+                    </div>
+
+                    <hr>
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="bestseller" value="1"
+                                    id="flexCheckDefault">
+                                <label class="form-check-label" for="flexCheckDefault">BestSeller</label>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="featured" value="1"
+                                    id="flexCheckDefault">
+                                <label class="form-check-label" for="flexCheckDefault">Featured</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="highestrated" value="1"
+                                    id="flexCheckDefault">
+                                <label class="form-check-label" for="flexCheckDefault">Highest Rated</label>
+                            </div>
+                        </div>
+
                     </div>
 
 
