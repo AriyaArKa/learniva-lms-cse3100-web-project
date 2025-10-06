@@ -69,12 +69,22 @@
                         </select>
                     </div>
 
-
                     <div class="form-group col-md-6">
                         <label for="input1" class="form-label">Course Subcategory </label>
-                        <select name="category_id" class="form-select mb-3" aria-label="Default select example">
-                            <option selected="" disabled>Open this select menu</option>
+                        <select name="subcategory_id" class="form-select mb-3" aria-label="Default select example">
+                            <option> </option>
 
+                        </select>
+                    </div>
+
+
+                    <div class="form-group col-md-6">
+                        <label for="input1" class="form-label">Course Label </label>
+                        <select name="label" class="form-select mb-3" aria-label="Default select example">
+                            <option selected="" disabled>Open this select menu</option>
+                            <option value="Begginer">Begginer</option>
+                            <option value="Middle">Middle</option>
+                            <option value="Advance">Advance</option>
                         </select>
                     </div>
 
@@ -89,25 +99,25 @@
                     </div>
 
 
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-3">
                         <label for="input1" class="form-label">Course Price </label>
                         <input type="text" name="selling_price" class="form-control" id="input1">
                     </div>
 
 
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <label for="input1" class="form-label">Discount Price </label>
                         <input type="text" name="discount_price" class="form-control" id="input1">
                     </div>
 
 
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <label for="input1" class="form-label">Duration </label>
                         <input type="text" name="duration" class="form-control" id="input1">
                     </div>
 
 
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <label for="input1" class="form-label">Resources </label>
                         <input type="text" name="resources" class="form-control" id="input1">
                     </div>

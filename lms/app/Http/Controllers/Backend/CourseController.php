@@ -15,16 +15,23 @@ use Illuminate\Support\Facades\Auth;
 
 class CourseController extends Controller
 {
-    public function AllCourse() {
+    public function AllCourse()
+    {
         $id = Auth::user()->id;
-        $courses = Course::where('instructor_id', $id)->latest()->get();$courses = Course::where('instructor_id',$id)->orderBy('id','desc')->get();
-        return view('instructor.courses.all_course',compact('courses'));
+        $courses = Course::where('instructor_id', $id)->latest()->get();
+        $courses = Course::where('instructor_id', $id)->orderBy('id', 'desc')->get();
+        return view('instructor.courses.all_course', compact('courses'));
     } //end method
 
-    public function AddCourse(){
+    public function AddCourse()
+    {
 
         $categories = Category::latest()->get();
-        return view('instructor.courses.add_course',compact('categories'));
-    }// End Method 
+        return view('instructor.courses.add_course', compact('categories'));
+    } // End Method 
+
+
+    
+
 
 }
