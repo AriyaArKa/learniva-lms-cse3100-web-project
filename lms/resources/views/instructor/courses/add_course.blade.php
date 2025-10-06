@@ -22,7 +22,7 @@
             <div class="card-body p-4">
                 <h5 class="mb-4">Add Course</h5>
 
-                <form id="myForm" action="{{ route('store.category') }}" method="post" class="row g-3"
+                <form id="myForm" action="{{ route('store.course') }}" method="post" class="row g-3"
                     enctype="multipart/form-data">
                     @csrf
 
@@ -72,7 +72,7 @@
                     <div class="form-group col-md-6">
                         <label for="input1" class="form-label">Course Subcategory </label>
                         <select name="subcategory_id" class="form-select mb-3" aria-label="Default select example">
-                            <option> </option>
+                            <option value="">None</option>
 
                         </select>
                     </div>
@@ -247,26 +247,26 @@
 
     </div>
 
+
     <script type="text/javascript">
         $(document).ready(function () {
             $('#myForm').validate({
                 rules: {
-                    category_name: {
+                    course_name: {
                         required: true,
                     },
-                    image: {
+                    course_title: {
                         required: true,
                     },
 
                 },
                 messages: {
-                    category_name: {
-                        required: 'Please Enter Category Name',
+                    course_name: {
+                        required: 'Please Enter Course Name',
                     },
-                    image: {
-                        required: 'Please Select Category Image',
+                    course_title: {
+                        required: 'Please Enter Course Title',
                     },
-
 
                 },
                 errorElement: 'span',
@@ -310,15 +310,17 @@
                         type: "GET",
                         dataType: "json",
                         success: function (data) {
-                            $('select[name="subcategory_id"]').html('');
-                            var d = $('select[name="subcategory_id"]').empty();
+                            $('select[name="subcategory_id"]').html('<option value="">None</option>');
                             $.each(data, function (key, value) {
                                 $('select[name="subcategory_id"]').append('<option value="' + value.id + '">' + value.subcategory_name + '</option>');
                             });
                         },
+                        error: function () {
+                            $('select[name="subcategory_id"]').html('<option value="">None</option>');
+                        }
                     });
                 } else {
-                    alert('danger');
+                    $('select[name="subcategory_id"]').html('<option value="">None</option>');
                 }
             });
         });

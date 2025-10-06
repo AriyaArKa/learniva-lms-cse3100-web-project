@@ -95,9 +95,10 @@ Route::middleware(['auth', 'role:instructor'])->group(function () {
     Route::controller(CourseController::class)->group(function () {
         Route::get('/all/course', 'AllCourse')->name('all.course');
         Route::get('/add/course', 'AddCourse')->name('add.course');
-        Route::get('/subcategory/ajax/{category_id}','GetSubCategory');
+        Route::get('/subcategory/ajax/{category_id}', 'GetSubCategory');
+        Route::post('/store/course', 'StoreCourse')->name('store.course');
+        Route::get('/check/data', 'CheckData'); // Temporary route to check data
     });
-
 });
 //end instructor group middleware
 Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin'])->name('instructor.login');
