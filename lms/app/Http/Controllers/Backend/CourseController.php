@@ -9,6 +9,7 @@ use App\Models\SubCategory;
 use App\Models\Course;
 use App\Models\Course_goal;
 use Illuminate\Support\Facades\Auth;
+use Intervention\Image\Laravel\Facades\Image;
 use Carbon\Carbon;
 
 class CourseController extends Controller
@@ -226,24 +227,25 @@ class CourseController extends Controller
         return redirect()->route('all.course')->with($notification);
     } // End Method 
 
-    
-    public function EditCourse($id){
+
+    public function EditCourse($id)
+    {
 
         $course = Course::find($id);
         $categories = Category::latest()->get();
         $subcategories = SubCategory::latest()->get();
-        return view('instructor.courses.edit_course',compact('course','categories','subcategories'));
+        return view('instructor.courses.edit_course', compact('course', 'categories', 'subcategories'));
+    } // End Method 
 
-    }// End Method 
 
-
-    public function UpdateCourse(Request $request){
+    public function UpdateCourse(Request $request)
+    {
 
         $cid = $request->course_id;
-        
+
         // Find the course first and check if it exists
         $course = Course::find($cid);
-        
+
         if (!$course) {
             $notification = array(
                 'message' => 'Course not found',
@@ -251,7 +253,7 @@ class CourseController extends Controller
             );
             return redirect()->route('all.course')->with($notification);
         }
-         
+
         $course->update([
             'category_id' => $request->category_id,
             'subcategory_id' => $request->subcategory_id,
@@ -259,8 +261,7 @@ class CourseController extends Controller
             'course_title' => $request->course_title,
             'course_name' => $request->course_name,
             'course_name_slug' => strtolower(str_replace(' ', '-', $request->course_name)),
-            'description' => $request->description, 
-
+            'description' => $request->description,
             'label' => $request->label,
             'duration' => $request->duration,
             'resources' => $request->resources,
@@ -268,20 +269,102 @@ class CourseController extends Controller
             'selling_price' => $request->selling_price,
             'discount_price' => $request->discount_price,
             'prerequisites' => $request->prerequisites,
-
             'bestseller' => $request->bestseller,
             'featured' => $request->featured,
-            'highestrated' => $request->highestrated,  
-
-        ]); 
+            'highestrated' => $request->highestrated,
+        ]);
 
         $notification = array(
             'message' => 'Course Updated Successfully',
             'alert-type' => 'success'
         );
-        return redirect()->route('all.course')->with($notification);  
+        return redirect()->route('all.course')->with($notification);
+    } // End Method 
 
-    }// End Method 
+
+    public function UpdateCourseImage(Request $request)
+    {
+
+        $course_id = $request->id;
+        $oldImage = $request->old_img;
+        $image = $request->file('course_image');
+        $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+
+        // Ensure upload directory exists
+        $uploadPath = public_path('upload/course/thambnail/');
+        if (!file_exists($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+
+        try {
+            // Use native PHP GD functions for image processing
+            if (extension_loaded('gd') && function_exists('imagecreatefromstring')) {
+                $sourceImage = imagecreatefromstring(file_get_contents($image->getPathname()));
+                if ($sourceImage !== false) {
+                    $width = imagesx($sourceImage);
+                    $height = imagesy($sourceImage);
+
+                    // Calculate new dimensions maintaining aspect ratio
+                    $newWidth = 370;
+                    $newHeight = 246;
+                    $aspectRatio = $width / $height;
+
+                    if ($aspectRatio > ($newWidth / $newHeight)) {
+                        $newHeight = $newWidth / $aspectRatio;
+                    } else {
+                        $newWidth = $newHeight * $aspectRatio;
+                    }
+
+                    $newImage = imagecreatetruecolor($newWidth, $newHeight);
+                    imagecopyresampled($newImage, $sourceImage, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+
+                    // Save based on file extension
+                    $extension = strtolower($image->getClientOriginalExtension());
+                    switch ($extension) {
+                        case 'jpg':
+                        case 'jpeg':
+                            imagejpeg($newImage, $uploadPath . $name_gen, 90);
+                            break;
+                        case 'png':
+                            imagepng($newImage, $uploadPath . $name_gen);
+                            break;
+                        case 'gif':
+                            imagegif($newImage, $uploadPath . $name_gen);
+                            break;
+                        default:
+                            imagejpeg($newImage, $uploadPath . $name_gen, 90);
+                    }
+
+                    imagedestroy($sourceImage);
+                    imagedestroy($newImage);
+                } else {
+                    throw new \Exception('Could not create image from source');
+                }
+            } else {
+                throw new \Exception('GD extension not available');
+            }
+        } catch (\Exception $e) {
+            // Fallback: just move the original image
+            $image->move($uploadPath, $name_gen);
+        }
+
+        $save_url = 'upload/course/thambnail/' . $name_gen;
+
+        if (file_exists($oldImage)) {
+            unlink($oldImage);
+        }
+
+        Course::find($course_id)->update([
+            'course_image' => $save_url,
+            'updated_at' => Carbon::now(),
+        ]);
+
+        $notification = array(
+            'message' => 'Course Image Updated Successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->back()->with($notification);
+    } // End Method 
 
 
 
