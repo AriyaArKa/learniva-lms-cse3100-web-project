@@ -16,7 +16,6 @@ class CourseController extends Controller
     public function AllCourse()
     {
         $id = Auth::user()->id;
-        $courses = Course::where('instructor_id', $id)->latest()->get();
         $courses = Course::where('instructor_id', $id)->orderBy('id', 'desc')->get();
         return view('instructor.courses.all_course', compact('courses'));
     } //end method
@@ -226,6 +225,17 @@ class CourseController extends Controller
         );
         return redirect()->route('all.course')->with($notification);
     } // End Method 
+
+    public function EditCourse($id){
+
+        $course = Course::find($id);
+        $categories = Category::latest()->get();
+        $subcategories = SubCategory::latest()->get();
+        return view('instructor.courses.edit_course',compact('course','categories','subcategories'));
+
+    }// End Method 
+
+
 
 
 
