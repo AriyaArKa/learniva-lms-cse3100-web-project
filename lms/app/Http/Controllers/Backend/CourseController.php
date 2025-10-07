@@ -369,6 +369,48 @@ class CourseController extends Controller
 
 
 
+    public function UpdateCourseVideo(Request $request)
+    {
+
+        $course_id = $request->vid;
+        $oldVideo = $request->old_vid;
+
+        $request->validate([
+            'video' => 'required|mimes:mp4|max:10000',
+        ]);
+
+        $video = $request->file('video');
+        $videoName = time() . '.' . $video->getClientOriginalExtension();
+
+        // Ensure video upload directory exists
+        $videoUploadPath = public_path('upload/course/video/');
+        if (!file_exists($videoUploadPath)) {
+            mkdir($videoUploadPath, 0755, true);
+        }
+
+        $video->move($videoUploadPath, $videoName);
+        $save_video = 'upload/course/video/' . $videoName;
+
+        if (file_exists(public_path($oldVideo))) {
+            unlink(public_path($oldVideo));
+        }
+
+        Course::find($course_id)->update([
+            'video' => $save_video,
+            'updated_at' => Carbon::now(),
+        ]);
+
+        $notification = array(
+            'message' => 'Course Video Updated Successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->back()->with($notification);
+    } // End Method 
+
+
+
+
+
 
 
 
