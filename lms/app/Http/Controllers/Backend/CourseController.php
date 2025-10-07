@@ -226,6 +226,7 @@ class CourseController extends Controller
         return redirect()->route('all.course')->with($notification);
     } // End Method 
 
+    
     public function EditCourse($id){
 
         $course = Course::find($id);
@@ -234,6 +235,55 @@ class CourseController extends Controller
         return view('instructor.courses.edit_course',compact('course','categories','subcategories'));
 
     }// End Method 
+
+
+    public function UpdateCourse(Request $request){
+
+        $cid = $request->course_id;
+        
+        // Find the course first and check if it exists
+        $course = Course::find($cid);
+        
+        if (!$course) {
+            $notification = array(
+                'message' => 'Course not found',
+                'alert-type' => 'error'
+            );
+            return redirect()->route('all.course')->with($notification);
+        }
+         
+        $course->update([
+            'category_id' => $request->category_id,
+            'subcategory_id' => $request->subcategory_id,
+            'instructor_id' => Auth::user()->id,
+            'course_title' => $request->course_title,
+            'course_name' => $request->course_name,
+            'course_name_slug' => strtolower(str_replace(' ', '-', $request->course_name)),
+            'description' => $request->description, 
+
+            'label' => $request->label,
+            'duration' => $request->duration,
+            'resources' => $request->resources,
+            'certificate' => $request->certificate,
+            'selling_price' => $request->selling_price,
+            'discount_price' => $request->discount_price,
+            'prerequisites' => $request->prerequisites,
+
+            'bestseller' => $request->bestseller,
+            'featured' => $request->featured,
+            'highestrated' => $request->highestrated,  
+
+        ]); 
+
+        $notification = array(
+            'message' => 'Course Updated Successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->route('all.course')->with($notification);  
+
+    }// End Method 
+
+
 
 
 
