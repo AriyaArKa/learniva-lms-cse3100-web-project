@@ -102,7 +102,7 @@ Route::middleware(['auth', 'role:instructor'])->group(function () {
         Route::post('/update/course/image', 'UpdateCourseImage')->name('update.course.image');
         Route::post('/update/course/video', 'UpdateCourseVideo')->name('update.course.video');
         Route::post('/update/course/goals', 'UpdateCourseGoals')->name('update.course.goals');
-     Route::get('/delete/course/{id}','DeleteCourse')->name('delete.course');
+        Route::get('/delete/course/{id}', 'DeleteCourse')->name('delete.course');
     });
 });
 //end instructor group middleware
