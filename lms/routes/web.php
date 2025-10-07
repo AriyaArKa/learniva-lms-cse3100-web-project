@@ -98,9 +98,10 @@ Route::middleware(['auth', 'role:instructor'])->group(function () {
         Route::get('/subcategory/ajax/{category_id}', 'GetSubCategory');
         Route::post('/store/course', 'StoreCourse')->name('store.course');
         Route::get('/edit/course/{id}', 'EditCourse')->name('edit.course');
-         Route::post('/update/course','UpdateCourse')->name('update.course');
-         Route::post('/update/course/image','UpdateCourseImage')->name('update.course.image');
-         Route::post('/update/course/video','UpdateCourseVideo')->name('update.course.video');
+        Route::post('/update/course', 'UpdateCourse')->name('update.course');
+        Route::post('/update/course/image', 'UpdateCourseImage')->name('update.course.image');
+        Route::post('/update/course/video', 'UpdateCourseVideo')->name('update.course.video');
+        Route::post('/update/course/goals', 'UpdateCourseGoals')->name('update.course.goals');
     });
 });
 //end instructor group middleware

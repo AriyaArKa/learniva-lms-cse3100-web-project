@@ -232,10 +232,11 @@ class CourseController extends Controller
     {
 
         $course = Course::find($id);
+        $goals = Course_goal::where('course_id', $id)->get();
         $categories = Category::latest()->get();
         $subcategories = SubCategory::latest()->get();
-        return view('instructor.courses.edit_course', compact('course', 'categories', 'subcategories'));
-    } // End Method 
+        return view('instructor.courses.edit_course', compact('course', 'categories', 'subcategories', 'goals'));
+    } // End Method
 
 
     public function UpdateCourse(Request $request)
@@ -402,6 +403,35 @@ class CourseController extends Controller
 
         $notification = array(
             'message' => 'Course Video Updated Successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->back()->with($notification);
+    } // End Method 
+
+
+    public function UpdateCourseGoals(Request $request)
+    {
+
+        $course_id = $request->course_id;
+
+        // Delete existing goals
+        Course_goal::where('course_id', $course_id)->delete();
+
+        // Add new goals
+        $goals = $request->course_goals;
+        if ($goals != NULL) {
+            foreach ($goals as $goal) {
+                if (!empty($goal)) { // Only add non-empty goals
+                    $gcount = new Course_goal();
+                    $gcount->course_id = $course_id;
+                    $gcount->goal_name = $goal;
+                    $gcount->save();
+                }
+            }
+        }
+
+        $notification = array(
+            'message' => 'Course Goals Updated Successfully',
             'alert-type' => 'success'
         );
         return redirect()->back()->with($notification);
