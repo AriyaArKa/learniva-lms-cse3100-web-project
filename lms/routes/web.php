@@ -104,6 +104,11 @@ Route::middleware(['auth', 'role:instructor'])->group(function () {
         Route::post('/update/course/goals', 'UpdateCourseGoals')->name('update.course.goals');
         Route::get('/delete/course/{id}', 'DeleteCourse')->name('delete.course');
     });
+
+    // Course Section and Lecture All Route 
+    Route::controller(CourseController::class)->group(function () {
+        Route::get('/add/course/lecture/{id}', 'AddCourseLecture')->name('add.course.lecture');
+    });
 });
 //end instructor group middleware
 Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin'])->name('instructor.login');
