@@ -71,8 +71,8 @@
                 <div class="row align-items-center">
                     <div class="col-lg-2">
                         <div class="logo-box">
-                            <a href="{{ url('/') }}" class="logo"><img src="{{ asset('frontend/images/logo.png') }}"
-                                    alt="logo"></a>
+                            <a href="{{ url('/') }}" class="logo"><img
+                                    src="{{ asset('frontend/images/logo.png') }}" alt="logo"></a>
                             <div class="user-btn-action">
                                 <div class="search-menu-toggle icon-element icon-element-sm shadow-sm mr-2"
                                     data-toggle="tooltip" data-placement="top" title="Search">
@@ -89,6 +89,12 @@
                             </div>
                         </div>
                     </div><!-- end col-lg-2 -->
+
+
+                    @php
+                        $categories = App\Models\Category::orderBy('category_name', 'ASC')->get();
+                    @endphp
+
                     <div class="col-lg-10">
                         <div class="menu-wrapper">
                             <div class="menu-category">
@@ -96,131 +102,26 @@
                                     <li>
                                         <a href="#">Categories <i class="la la-angle-down fs-12"></i></a>
                                         <ul class="cat-dropdown-menu">
-                                            <li>
-                                                <a href="course-grid.html">Development <i
-                                                        class="la la-angle-right"></i></a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="#">All Development</a></li>
-                                                    <li><a href="#">Web Development</a></li>
-                                                    <li><a href="#">Mobile Apps</a></li>
-                                                    <li><a href="#">Game Development</a></li>
-                                                    <li><a href="#">Databases</a></li>
-                                                    <li><a href="#">Programming Languages</a></li>
-                                                    <li><a href="#">Software Testing</a></li>
-                                                    <li><a href="#">Software Engineering</a></li>
-                                                    <li><a href="#">E-Commerce</a></li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <a href="course-grid.html">business <i
-                                                        class="la la-angle-right"></i></a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="#">All Business</a></li>
-                                                    <li><a href="#">Finance</a></li>
-                                                    <li><a href="#">Entrepreneurship</a></li>
-                                                    <li><a href="#">Strategy</a></li>
-                                                    <li><a href="#">Real Estate</a></li>
-                                                    <li><a href="#">Home Business</a></li>
-                                                    <li><a href="#">Communications</a></li>
-                                                    <li><a href="#">Industry</a></li>
-                                                    <li><a href="#">Other</a></li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <a href="course-grid.html">IT & Software <i
-                                                        class="la la-angle-right"></i></a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="#">All IT & Software</a></li>
-                                                    <li><a href="#">IT Certification</a></li>
-                                                    <li><a href="#">Hardware</a></li>
-                                                    <li><a href="#">Network & Security</a></li>
-                                                    <li><a href="#">Operating Systems</a></li>
-                                                    <li><a href="#">Other</a></li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <a href="course-grid.html">Finance & Accounting <i
-                                                        class="la la-angle-right"></i></a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="#"> All Finance & Accounting</a></li>
-                                                    <li><a href="#">Accounting & Bookkeeping</a></li>
-                                                    <li><a href="#">Cryptocurrency & Blockchain</a></li>
-                                                    <li><a href="#">Economics</a></li>
-                                                    <li><a href="#">Investing & Trading</a></li>
-                                                    <li><a href="#">Other Finance & Economics</a></li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <a href="course-grid.html">design <i
-                                                        class="la la-angle-right"></i></a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="#">All Design</a></li>
-                                                    <li><a href="#">Graphic Design</a></li>
-                                                    <li><a href="#">Web Design</a></li>
-                                                    <li><a href="#">Design Tools</a></li>
-                                                    <li><a href="#">3D & Animation</a></li>
-                                                    <li><a href="#">User Experience</a></li>
-                                                    <li><a href="#">Other</a></li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <a href="course-grid.html">Personal Development <i
-                                                        class="la la-angle-right"></i></a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="#">All Personal Development</a></li>
-                                                    <li><a href="#">Personal Transformation</a></li>
-                                                    <li><a href="#">Productivity</a></li>
-                                                    <li><a href="#">Leadership</a></li>
-                                                    <li><a href="#">Personal Finance</a></li>
-                                                    <li><a href="#">Career Development</a></li>
-                                                    <li><a href="#">Parenting & Relationships</a></li>
-                                                    <li><a href="#">Happiness</a></li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <a href="course-grid.html">Marketing <i
-                                                        class="la la-angle-right"></i></a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="#">All Marketing</a></li>
-                                                    <li><a href="#">Digital Marketing</a></li>
-                                                    <li><a href="#">Search Engine Optimization</a></li>
-                                                    <li><a href="#">Social Media Marketing</a></li>
-                                                    <li><a href="#">Branding</a></li>
-                                                    <li><a href="#">Video & Mobile Marketing</a></li>
-                                                    <li><a href="#">Affiliate Marketing</a></li>
-                                                    <li><a href="#">Growth Hacking</a></li>
-                                                    <li><a href="#">Other</a></li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <a href="course-grid.html">Health & Fitness <i
-                                                        class="la la-angle-right"></i></a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="#">All Health & Fitness</a></li>
-                                                    <li><a href="#">Fitness</a></li>
-                                                    <li><a href="#">Sports</a></li>
-                                                    <li><a href="#">Dieting</a></li>
-                                                    <li><a href="#">Self Defense</a></li>
-                                                    <li><a href="#">Meditation</a></li>
-                                                    <li><a href="#">Mental Health</a></li>
-                                                    <li><a href="#">Yoga</a></li>
-                                                    <li><a href="#">Dance</a></li>
-                                                    <li><a href="#">Other</a></li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <a href="course-grid.html">Photography <i
-                                                        class="la la-angle-right"></i></a>
-                                                <ul class="sub-menu">
-                                                    <li><a href="#">All Photography</a></li>
-                                                    <li><a href="#">Digital Photography</a></li>
-                                                    <li><a href="#">Photography Fundamentals</a></li>
-                                                    <li><a href="#">Commercial Photography</a></li>
-                                                    <li><a href="#">Video Design</a></li>
-                                                    <li><a href="#">Photography Tools</a></li>
-                                                    <li><a href="#">Other</a></li>
-                                                </ul>
-                                            </li>
+
+                                            @foreach ($categories as $cat)
+                                                @php
+                                                    $subcategories = App\Models\SubCategory::where(
+                                                        'category_id',
+                                                        $cat->id,
+                                                    )->get();
+                                                @endphp
+                                                <li>
+                                                    <a href="{{ url('category/' . $cat->id . '/' . $cat->category_slug) }}">{{ $cat->category_name }}<i
+                                                            class="la la-angle-right"></i></a>
+                                                    <ul class="sub-menu">
+                                                        @foreach ($subcategories as $subcat)
+                                                            <li><a href="#">{{ $subcat->subcategory_name }}</a>
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </li>
+                                            @endforeach
+
                                         </ul>
                                     </li>
                                 </ul>
@@ -235,7 +136,8 @@
                             <nav class="main-menu">
                                 <ul>
                                     <li>
-                                        <a href="{{ url('/') }}">Home</a>
+                                        <a href="{{ url('/') }}">Home </a>
+
                                     </li>
                                     <li>
                                         <a href="#">courses <i class="la la-angle-down fs-12"></i></a>
@@ -245,8 +147,10 @@
 
                                         </ul>
                                     </li>
+
                                     <li>
-                                        <a href="#">blog</a>
+                                        <a href="#">blog </a>
+
                                     </li>
                                 </ul><!-- end ul -->
                             </nav><!-- end main-menu -->
