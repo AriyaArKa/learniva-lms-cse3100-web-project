@@ -45,7 +45,8 @@
                         <select name="category_id" class="form-select mb-3" aria-label="Default select example">
                             <option selected="" disabled>Open this select menu</option>
                             @foreach ($categories as $cat)
-                                <option value="{{ $cat->id }}" {{ $cat->id == $course->category_id ? 'selected' : '' }}>
+                                <option value="{{ $cat->id }}"
+                                    {{ $cat->id == $course->category_id ? 'selected' : '' }}>
                                     {{ $cat->category_name }}</option>
                             @endforeach
 
@@ -58,7 +59,8 @@
                         <select name="subcategory_id" class="form-select mb-3" aria-label="Default select example">
                             <option selected="" disabled>Open this select menu</option>
                             @foreach ($subcategories as $subcat)
-                                <option value="{{ $subcat->id }}" {{ $subcat->id == $course->subcategory_id ? 'selected' : '' }}>
+                                <option value="{{ $subcat->id }}"
+                                    {{ $subcat->id == $course->subcategory_id ? 'selected' : '' }}>
                                     {{ $subcat->subcategory_name }}</option>
                             @endforeach
 
@@ -102,7 +104,8 @@
 
                     <div class="form-group col-md-3">
                         <label for="input1" class="form-label">Duration </label>
-                        <input type="text" name="duration" class="form-control" id="input1" value="{{ $course->duration }}">
+                        <input type="text" name="duration" class="form-control" id="input1"
+                            value="{{ $course->duration }}">
                     </div>
 
 
@@ -114,14 +117,12 @@
 
                     <div class="form-group col-md-12">
                         <label for="input1" class="form-label">Course Prerequisites </label>
-                        <textarea name="prerequisites" class="form-control" id="input11" placeholder="Prerequisites ..."
-                            rows="3">{{ $course->prerequisites }}</textarea>
+                        <textarea name="prerequisites" class="form-control" id="input11" placeholder="Prerequisites ..." rows="3">{{ $course->prerequisites }}</textarea>
                     </div>
 
                     <div class="form-group col-md-12">
                         <label for="input1" class="form-label">Course Description </label>
-                        <textarea name="description" class="form-control"
-                            id="myeditorinstance">{!! $course->description !!}</textarea>
+                        <textarea name="description" class="form-control" id="myeditorinstance">{!! $course->description !!}</textarea>
                     </div>
 
                     <hr>
@@ -269,34 +270,50 @@
 
 
                     <!--   //////////// Goal Option /////////////// -->
-                    @foreach ($goals as $item)
-                        <div class="row add_item">
-                            <div class="whole_extra_item_delete" id="whole_extra_item_delete">
-                                <div class="container mt-2">
-                                    <div class="row">
+                    @if ($goals->count() > 0)
+                        @foreach ($goals as $item)
+                            <div class="row add_item">
+                                <div class="whole_extra_item_delete" id="whole_extra_item_delete">
+                                    <div class="container mt-2">
+                                        <div class="row">
 
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="goals" class="form-label"> Goals </label>
-                                                <input type="text" name="course_goals[]" id="goals" class="form-control"
-                                                    value="{{ $item->goal_name }}">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="goals" class="form-label"> Goals </label>
+                                                    <input type="text" name="course_goals[]" id="goals"
+                                                        class="form-control" value="{{ $item->goal_name }}">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group col-md-6" style="padding-top: 30px;">
-                                            <a class="btn btn-success addeventmore"><i class="fa fa-plus-circle"></i> Add
-                                                More..</a>
+                                            <div class="form-group col-md-6" style="padding-top: 30px;">
+                                                <a class="btn btn-success addeventmore"><i class="fa fa-plus-circle"></i>
+                                                    Add
+                                                    More..</a>
 
-                                            <span class="btn btn-danger btn-sm removeeventmore"><i
-                                                    class="fa fa-minus-circle">Remove</i></span>
+                                                <span class="btn btn-danger btn-sm removeeventmore"><i
+                                                        class="fa fa-minus-circle">Remove</i></span>
 
 
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div> <!---end row-->
+                        @endforeach
+                    @else
+                        <!-- Default input when no goals exist -->
+                        <div class="row add_item">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="goals" class="form-label">Goals</label>
+                                    <input type="text" name="course_goals[]" id="goals" class="form-control"
+                                        placeholder="Enter course goal...">
+                                </div>
                             </div>
-                        </div> <!---end row-->
-
-                    @endforeach
+                            <div class="form-group col-md-6" style="padding-top: 30px;">
+                                <a class="btn btn-success addeventmore"><i class="fa fa-plus-circle"></i> Add More..</a>
+                            </div>
+                        </div>
+                    @endif
 
                     <!--   //////////// End Goal Option /////////////// -->
 
@@ -325,16 +342,15 @@
             <div class="whole_extra_item_delete" id="whole_extra_item_delete">
                 <div class="container mt-2">
                     <div class="row">
-
-
                         <div class="form-group col-md-6">
                             <label for="goals">Goals</label>
-                            <input type="text" name="course_goals[]" id="goals" class="form-control" placeholder="Goals  ">
+                            <input type="text" name="course_goals[]" id="goals" class="form-control"
+                                placeholder="Enter course goal...">
                         </div>
                         <div class="form-group col-md-6" style="padding-top: 20px">
-                            <span class="btn btn-success btn-sm addeventmore"><i class="fa fa-plus-circle">Add</i></span>
-                            <span class="btn btn-danger btn-sm removeeventmore"><i
-                                    class="fa fa-minus-circle">Remove</i></span>
+                            <span class="btn btn-success btn-sm addeventmore"><i class="fa fa-plus-circle"></i> Add</span>
+                            <span class="btn btn-danger btn-sm removeeventmore"><i class="fa fa-minus-circle"></i>
+                                Remove</span>
                         </div>
                     </div>
                 </div>
@@ -345,14 +361,14 @@
 
     <!----For Section-------->
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(document).ready(function() {
             var counter = 0;
-            $(document).on("click", ".addeventmore", function () {
+            $(document).on("click", ".addeventmore", function() {
                 var whole_extra_item_add = $("#whole_extra_item_add").html();
                 $(this).closest(".add_item").append(whole_extra_item_add);
                 counter++;
             });
-            $(document).on("click", ".removeeventmore", function (event) {
+            $(document).on("click", ".removeeventmore", function(event) {
                 $(this).closest("#whole_extra_item_delete").remove();
                 counter -= 1
             });
@@ -363,20 +379,21 @@
 
 
     <script type="text/javascript">
-
-        $(document).ready(function () {
-            $('select[name="category_id"]').on('change', function () {
+        $(document).ready(function() {
+            $('select[name="category_id"]').on('change', function() {
                 var category_id = $(this).val();
                 if (category_id) {
                     $.ajax({
                         url: "{{ url('/subcategory/ajax') }}/" + category_id,
                         type: "GET",
                         dataType: "json",
-                        success: function (data) {
+                        success: function(data) {
                             $('select[name="subcategory_id"]').html('');
                             var d = $('select[name="subcategory_id"]').empty();
-                            $.each(data, function (key, value) {
-                                $('select[name="subcategory_id"]').append('<option value="' + value.id + '">' + value.subcategory_name + '</option>');
+                            $.each(data, function(key, value) {
+                                $('select[name="subcategory_id"]').append(
+                                    '<option value="' + value.id + '">' + value
+                                    .subcategory_name + '</option>');
                             });
                         },
 
@@ -386,11 +403,10 @@
                 }
             });
         });
-
     </script>
 
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#myForm').validate({
                 rules: {
                     course_name: {
@@ -412,34 +428,29 @@
 
                 },
                 errorElement: 'span',
-                errorPlacement: function (error, element) {
+                errorPlacement: function(error, element) {
                     error.addClass('invalid-feedback');
                     element.closest('.form-group').append(error);
                 },
-                highlight: function (element, errorClass, validClass) {
+                highlight: function(element, errorClass, validClass) {
                     $(element).addClass('is-invalid');
                 },
-                unhighlight: function (element, errorClass, validClass) {
+                unhighlight: function(element, errorClass, validClass) {
                     $(element).removeClass('is-invalid');
                 },
             });
         });
-
     </script>
 
     <script type="text/javascript">
-
-        $(document).ready(function () {
-            $('#image').change(function (e) {
+        $(document).ready(function() {
+            $('#image').change(function(e) {
                 var reader = new FileReader();
-                reader.onload = function (e) {
+                reader.onload = function(e) {
                     $('#showImage').attr('src', e.target.result);
                 }
                 reader.readAsDataURL(e.target.files['0']);
             });
         });
-
     </script>
-
-
 @endsection

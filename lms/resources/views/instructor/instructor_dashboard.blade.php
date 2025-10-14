@@ -11,7 +11,7 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    
+
     <!--plugins-->
     <link href="{{ asset('backend/assets/plugins/vectormap/jquery-jvectormap-2.0.2.css') }}" rel="stylesheet" />
     <link href="{{ asset('backend/assets/plugins/simplebar/css/simplebar.css') }}" rel="stylesheet" />
@@ -34,6 +34,9 @@
     <!-- Datatable -->
     <link href="{{ asset('backend/assets/plugins/datatable/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet" />
     <!-- End Datatable -->
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 
 
@@ -322,7 +325,7 @@
         `)
             .appendTo('head');
 
-        @if(Session::has('message'))
+        @if (Session::has('message'))
             var type = "{{ Session::get('alert-type', 'info') }}"
             switch (type) {
                 case 'info':
@@ -341,7 +344,7 @@
                     toastr.error(" {{ Session::get('message') }} ");
                     break;
             }
-        @endif 
+        @endif
     </script>
 
 
@@ -349,19 +352,50 @@
     <script src="{{ asset('backend/assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('backend/assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#example').DataTable();
         });
     </script>
     <!--End Datatable-->
 
 
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
     <script>
-        tinymce.init({
-            selector: 'textarea#myeditorinstance', // Replace this CSS selector to match the placeholder element for TinyMCE
-            plugins: 'powerpaste advcode table lists checklist',
-            toolbar: 'undo redo | blocks| bold italic | bullist numlist checklist | code | table'
+        document.addEventListener('DOMContentLoaded', function() {
+            const editorElement = document.querySelector('#myeditorinstance');
+            if (editorElement) {
+                ClassicEditor
+                    .create(editorElement, {
+                        toolbar: {
+                            items: [
+                                'heading', '|',
+                                'bold', 'italic', 'link', '|',
+                                'bulletedList', 'numberedList', '|',
+                                'outdent', 'indent', '|',
+                                'blockQuote', 'insertTable', '|',
+                                'undo', 'redo'
+                            ]
+                        },
+                        language: 'en',
+                        table: {
+                            contentToolbar: [
+                                'tableColumn',
+                                'tableRow',
+                                'mergeTableCells'
+                            ]
+                        }
+                    })
+                    .then(editor => {
+                        window.editor = editor;
+                        // Update textarea on editor change
+                        editor.model.document.on('change:data', () => {
+                            editorElement.value = editor.getData();
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error initializing editor:', error);
+                    });
+            }
         });
     </script>
 

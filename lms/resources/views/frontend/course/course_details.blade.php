@@ -1,8 +1,52 @@
 @extends('frontend.master')
+
+<style>
+    /* Custom styles for course description content */
+    .course-description-content ul {
+        list-style-type: disc !important;
+        margin-left: 20px !important;
+        padding-left: 20px !important;
+    }
+
+    .course-description-content ol {
+        list-style-type: decimal !important;
+        margin-left: 20px !important;
+        padding-left: 20px !important;
+    }
+
+    .course-description-content li {
+        margin-bottom: 8px !important;
+        line-height: 1.6 !important;
+    }
+
+    .course-description-content p {
+        margin-bottom: 15px !important;
+    }
+
+    .course-description-content h1,
+    .course-description-content h2,
+    .course-description-content h3,
+    .course-description-content h4,
+    .course-description-content h5,
+    .course-description-content h6 {
+        margin-top: 20px !important;
+        margin-bottom: 10px !important;
+        font-weight: bold !important;
+    }
+
+    .course-description-content strong {
+        font-weight: bold !important;
+    }
+
+    .course-description-content em {
+        font-style: italic !important;
+    }
+</style>
+
 @section('home')
     <!-- ================================
-        START BREADCRUMB AREA
-    ================================= -->
+            START BREADCRUMB AREA
+        ================================= -->
     <section class="breadcrumb-area pt-50px pb-50px bg-white pattern-bg">
         <div class="container">
             <div class="col-lg-8 mr-auto">
@@ -74,12 +118,12 @@
         </div><!-- end container -->
     </section><!-- end breadcrumb-area -->
     <!-- ================================
-        END BREADCRUMB AREA
-    ================================= -->
+            END BREADCRUMB AREA
+        ================================= -->
 
     <!--======================================
-            START COURSE DETAILS AREA
-    ======================================-->
+                START COURSE DETAILS AREA
+        ======================================-->
     <section class="course-details-area pb-20px">
         <div class="container">
             <div class="row">
@@ -122,7 +166,9 @@
                         </div><!-- end course-overview-card -->
                         <div class="course-overview-card">
                             <h3 class="fs-24 font-weight-semi-bold pb-3">Description</h3>
-                            <p class="fs-15 pb-2"> {!! $course->description !!} </p>
+                            <div class="course-description-content">
+                                <div class="fs-15 pb-2"> {!! $course->description !!} </div>
+                            </div>
 
                             <div class="collapse" id="collapseMore">
                                 <h4 class="fs-20 font-weight-semi-bold py-2">Who this course is for:</h4>
@@ -933,12 +979,12 @@
         </div><!-- end container -->
     </section><!-- end course-details-area -->
     <!--======================================
-            END COURSE DETAILS AREA
-    ======================================-->
+                END COURSE DETAILS AREA
+        ======================================-->
 
     <!--======================================
-            START RELATED COURSE AREA
-    ======================================-->
+                START RELATED COURSE AREA
+        ======================================-->
     <section class="related-course-area bg-gray pt-60px pb-60px">
         <div class="container">
             <div class="related-course-wrap">
@@ -1082,12 +1128,12 @@
         </div><!-- end container -->
     </section><!-- end related-course-area -->
     <!--======================================
-            END RELATED COURSE AREA
-    ======================================-->
+                END RELATED COURSE AREA
+        ======================================-->
 
     <!--======================================
-            START CTA AREA
-    ======================================-->
+                START CTA AREA
+        ======================================-->
     <section class="cta-area pt-60px pb-60px position-relative overflow-hidden">
         <span class="stroke-shape stroke-shape-1"></span>
         <span class="stroke-shape stroke-shape-2"></span>
@@ -1132,8 +1178,8 @@
         </div><!-- end container -->
     </section><!-- end cta-area -->
     <!--======================================
-            END CTA AREA
-    ======================================-->
+                END CTA AREA
+        ======================================-->
 
 
 
