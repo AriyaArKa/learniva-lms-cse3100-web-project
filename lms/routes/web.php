@@ -43,7 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::controller(WishListController::class)->group(function () {
         Route::get('/user/wishlist', 'AllWishlist')->name('user.wishlist');
         Route::get('/get-wishlist-course/', 'GetWishlistCourse')->name('get.wishlist.course');
-            Route::get('/wishlist-remove/{id}','RemoveWishlist');
+        Route::get('/wishlist-remove/{id}', 'RemoveWishlist');
 
 
 
@@ -97,6 +97,20 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/update/user/status', 'UpdateUserStatus')->name('update.user.status');
     });
     // end instructor all routes
+
+
+    // Admin Coruses All Route 
+    Route::controller(AdminController::class)->group(function () {
+        Route::get('/admin/all/course', 'AdminAllCourse')->name('admin.all.course');
+        Route::post('/update/course/stauts','UpdateCourseStatus')->name('update.course.stauts');
+        Route::get('/admin/course/details/{id}','AdminCourseDetails')->name('admin.course.details');
+
+
+
+
+
+    });
+
 
 });
 // end admin group middleware
@@ -162,15 +176,15 @@ Route::get('/minicart/course/remove/{rowId}', [CartController::class, 'RemoveMin
 
 
 // Cart All Route 
-Route::controller(CartController::class)->group(function(){
-    Route::get('/mycart','MyCart')->name('mycart');
-    Route::get('/get-cart-course','GetCartCourse');
-    Route::get('/cart-remove/{rowId}','CartRemove');
+Route::controller(CartController::class)->group(function () {
+    Route::get('/mycart', 'MyCart')->name('mycart');
+    Route::get('/get-cart-course', 'GetCartCourse');
+    Route::get('/cart-remove/{rowId}', 'CartRemove');
 
 
 
 
-    
+
 });
 
 
