@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 
 
@@ -12,7 +13,8 @@ use App\Models\User;
 class UserController extends Controller
 {
     //
-    public function Index(){
+    public function Index()
+    {
         return view('frontend.index');
     }
 
@@ -36,7 +38,10 @@ class UserController extends Controller
 
     public function UserProfileUpdate(Request $request)
     {
-       // Validate the incoming request
+        // Debug: Log the incoming request data
+        Log::info('Profile update request received:', $request->all());
+
+        // Validate the incoming request
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . Auth::id(),
@@ -58,24 +63,54 @@ class UserController extends Controller
             return redirect()->back()->with($notification);
         }
 
-        // Only update if the values are not null or empty
-        $data->name = $request->filled('name') ? $request->name : $data->name;
-        $data->email = $request->filled('email') ? $request->email : $data->email;
-        $data->username = $request->filled('username') ? $request->username : $data->username;
-        $data->phone = $request->filled('phone') ? $request->phone : $data->phone;
-        $data->address = $request->filled('address') ? $request->address : $data->address;
+        // Update user data
+        $data->name = $request->name;
+        $data->email = $request->email;
+        $data->username = $request->username;
+        $data->phone = $request->phone;
+        $data->address = $request->address;
 
-        if ($request->file('photo')) {
+        // Handle photo upload
+        if ($request->hasFile('photo')) {
+            Log::info('Photo file detected for upload');
+            Log::info('File details:', [
+                'original_name' => $request->file('photo')->getClientOriginalName(),
+                'size' => $request->file('photo')->getSize(),
+                'mime_type' => $request->file('photo')->getMimeType()
+            ]);
+
             // Delete old photo if it exists
             if ($data->photo && file_exists(public_path('upload/user_images/' . $data->photo))) {
                 unlink(public_path('upload/user_images/' . $data->photo));
+                Log::info('Old photo deleted: ' . $data->photo);
             }
+
             $file = $request->file('photo');
             $filename = date('YmdHi') . $file->getClientOriginalName();
-            $file->move(public_path('upload/user_images'), $filename);
-            $data->photo = $filename;
+
+            try {
+                $file->move(public_path('upload/user_images'), $filename);
+                $data->photo = $filename;
+                Log::info('Photo uploaded successfully: ' . $filename);
+            } catch (\Exception $e) {
+                Log::error('Photo upload failed: ' . $e->getMessage());
+                $notification = array(
+                    'message' => 'Photo upload failed: ' . $e->getMessage(),
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification);
+            }
+        } else {
+            Log::info('No photo file detected in request');
+            if ($request->has('photo')) {
+                Log::info('Photo field exists but no file uploaded');
+            } else {
+                Log::info('Photo field does not exist in request');
+            }
         }
+
         $data->save();
+
         $notification = array(
             'message' => 'User Profile Updated Successfully!',
             'alert-type' => 'success'
@@ -118,5 +153,5 @@ class UserController extends Controller
         );
         return back()->with($notification);
     }
-    
+
 }
