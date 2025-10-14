@@ -7,6 +7,8 @@ use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\CourseController;
+use App\Http\Controllers\Frontend\IndexController;
+
 
 
 // Route::get('/', function () {
@@ -118,6 +120,12 @@ Route::middleware(['auth', 'role:instructor'])->group(function () {
 });
 //end instructor group middleware
 Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin'])->name('instructor.login');
+
+
+///route accessible for all
+Route::get('/course/details/{id}/{slug}', [IndexController::class, 'CourseDetails']);
+
+///end route accessible for all
 
 
 ////user group middleware
