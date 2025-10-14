@@ -125,6 +125,9 @@ Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin']
 ///route accessible for all
 Route::get('/course/details/{id}/{slug}', [IndexController::class, 'CourseDetails']);
 Route::get('/category/{id}/{slug}', [IndexController::class, 'CategoryCourse']);
+Route::get('/subcategory/{id}/{slug}', [IndexController::class, 'SubCategoryCourse']);
+
+
 
 ///end route accessible for all
 
