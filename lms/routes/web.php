@@ -33,7 +33,23 @@ Route::middleware('auth')->group(function () {
     Route::post('user/profile/update', [UserController::class, 'UserProfileUpdate'])->name('user.profile.update');
     Route::get('user/change/password', [UserController::class, 'UserChangePassword'])->name('user.change.password');
     Route::post('user/password/update', [UserController::class, 'UserPasswordUpdate'])->name('user.password.update');
+
+
+
+    // User Wishlist All Route 
+    Route::controller(WishListController::class)->group(function () {
+        Route::get('/user/wishlist', 'AllWishlist')->name('user.wishlist');
+        Route::get('/get-wishlist-course/', 'GetWishlistCourse')->name('get.wishlist.course');
+            Route::get('/wishlist-remove/{id}','RemoveWishlist');
+
+
+
+
+    });
+
 });
+///// End Auth Middleware 
+
 
 require __DIR__ . '/auth.php';
 
@@ -118,7 +134,7 @@ Route::middleware(['auth', 'role:instructor'])->group(function () {
         Route::get('/edit/lecture/{id}', 'EditLecture')->name('edit.lecture');
         Route::post('/update/course/lecture', 'UpdateCourseLecture')->name('update.course.lecture');
         Route::get('/delete/lecture/{id}', 'DeleteLecture')->name('delete.lecture');
-         Route::post('/delete/section/{id}','DeleteSection')->name('delete.section');
+        Route::post('/delete/section/{id}', 'DeleteSection')->name('delete.section');
     });
 });
 //end instructor group middleware
@@ -145,3 +161,4 @@ Route::post('/add-to-wishlist/{course_id}', [WishListController::class, 'AddToWi
 Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/user/dashboard', [UserController::class, 'UserDashboard'])->name('user.dashboard');
 });
+
