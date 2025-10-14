@@ -17,6 +17,11 @@
     <!-- Favicon -->
     <link rel="icon" sizes="16x16" href="{{ asset('frontend/images/favicon.png') }}">
 
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+
+
     <!-- inject:css -->
     <link rel="stylesheet" href="{{ asset('frontend/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/css/line-awesome.css') }}">
@@ -25,7 +30,7 @@
     <link rel="stylesheet" href="{{ asset('frontend/css/bootstrap-select.min.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/css/fancybox.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/css/tooltipster.bundle.css') }}">
-        <link rel="stylesheet" href="{{ asset('frontend/css/plyr.css') }}">
+    <link rel="stylesheet" href="{{ asset('frontend/css/plyr.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
     <!-- end inject -->
@@ -73,7 +78,7 @@
     </div>
     <!-- end scroll top -->
 
-  
+
 
 
     <!-- template js files -->
@@ -98,33 +103,40 @@
 
 
 
-<script>
-    var player = new Plyr('#player');
-</script>
+    <script>
+        var player = new Plyr('#player');
+    </script>
 
 
-<script>
- @if(Session::has('message'))
- var type = "{{ Session::get('alert-type','info') }}"
- switch(type){
-    case 'info':
-    toastr.info(" {{ Session::get('message') }} ");
-    break;
+    <script>
+        @if (Session::has('message'))
+            var type = "{{ Session::get('alert-type', 'info') }}"
+            switch (type) {
+                case 'info':
+                    toastr.info(" {{ Session::get('message') }} ");
+                    break;
 
-    case 'success':
-    toastr.success(" {{ Session::get('message') }} ");
-    break;
+                case 'success':
+                    toastr.success(" {{ Session::get('message') }} ");
+                    break;
 
-    case 'warning':
-    toastr.warning(" {{ Session::get('message') }} ");
-    break;
+                case 'warning':
+                    toastr.warning(" {{ Session::get('message') }} ");
+                    break;
 
-    case 'error':
-    toastr.error(" {{ Session::get('message') }} ");
-    break; 
- }
- @endif 
-</script>
+                case 'error':
+                    toastr.error(" {{ Session::get('message') }} ");
+                    break;
+            }
+        @endif
+    </script>
+
+
+
 </body>
+
+@include('frontend.body.script')
+
+
 
 </html>
