@@ -45,16 +45,18 @@
 
 @section('home')
     <!-- ================================
-                                        START BREADCRUMB AREA
-                                    ================================= -->
+                                                START BREADCRUMB AREA
+                                            ================================= -->
     <section class="breadcrumb-area pt-50px pb-50px bg-white pattern-bg">
         <div class="container">
             <div class="col-lg-8 mr-auto">
                 <div class="breadcrumb-content">
                     <ul class="generic-list-item generic-list-item-arrow d-flex flex-wrap align-items-center">
                         <li><a href="index.html">Home</a></li>
-                        <li><a href="#">{{ $course['category']['category_name'] }}</a></li>
-                        <li><a href="#">{{ $course['subcategory']['subcategory_name'] }}</a></li>
+                        <li><a href="#">{{ $course->category->category_name ?? 'Category' }}</a></li>
+                        @if ($course->subcategory)
+                            <li><a href="#">{{ $course->subcategory->subcategory_name }}</a></li>
+                        @endif
                     </ul>
                     <div class="section-heading">
                         <h2 class="section__title">{{ $course->course_name }}</h2>
@@ -79,7 +81,7 @@
                         </div>
                     </div><!-- end d-flex -->
                     <p class="pt-2 pb-1">Created by <a href="teacher-detail.html"
-                            class="text-color hover-underline">{{ $course['user']['name'] }}</a></p>
+                            class="text-color hover-underline">{{ $course->user->name ?? 'Instructor' }}</a></p>
                     <div class="d-flex flex-wrap align-items-center">
                         <p class="pr-3 d-flex align-items-center">
                             <svg class="svg-icon-color-gray mr-1" width="16px" viewBox="0 0 24 24">
@@ -118,12 +120,12 @@
         </div><!-- end container -->
     </section><!-- end breadcrumb-area -->
     <!-- ================================
-                                        END BREADCRUMB AREA
-                                    ================================= -->
+                                                END BREADCRUMB AREA
+                                            ================================= -->
 
     <!--======================================
-                                            START COURSE DETAILS AREA
-                                    ======================================-->
+                                                    START COURSE DETAILS AREA
+                                            ======================================-->
     <section class="course-details-area pb-20px">
         <div class="container">
             <div class="row">
@@ -281,10 +283,12 @@
 
 
                                     <div class="media-body">
-                                        <h5><a href="teacher-detail.html">{{ $course['user']['name'] }}</a></h5>
+                                        <h5><a href="teacher-detail.html">{{ $course->user->name ?? 'Instructor' }}</a>
+                                        </h5>
                                         <span class="d-block lh-18 pt-2 pb-3">Joined
-                                            {{ Carbon\Carbon::parse($course->user->created_at)->diffForHumans() }}</span>
-                                        <p class="text-black lh-18 pb-3">{{ $course['user']['email'] }}</p>
+                                            {{ Carbon\Carbon::parse($course->user->created_at ?? now())->diffForHumans() }}</span>
+                                        <p class="text-black lh-18 pb-3">
+                                            {{ $course->user->email ?? 'instructor@example.com' }}</p>
                                         <p class="pb-3">Lorem Ipsum is simply dummy text of the printing and typesetting
                                             industry. Lorem Ipsum has been the industry’s standard dummy text ever since the
                                             1500s, when an unknown printer took a galley of type and scrambled it to make a
@@ -698,7 +702,9 @@
                                 <div class="divider"><span></span></div>
                                 <ul class="generic-list-item">
                                     @foreach ($categories as $cat)
-                                        <li><a href="#">{{ $cat->category_name }}</a></li>
+                                        <li><a
+                                                href="{{ url('category/' . $cat->id . '/' . $cat->category_slug) }}">{{ $cat->category_name }}</a>
+                                        </li>
                                     @endforeach
                                 </ul>
                             </div>
@@ -718,7 +724,8 @@
                                         <div class="media-body">
                                             <h5 class="fs-15"><a href="course-details.html">
                                                     {{ $related->course_name }}</a></h5>
-                                            <span class="d-block lh-18 py-1 fs-14">{{ $related['user']['name'] }}</span>
+                                            <span
+                                                class="d-block lh-18 py-1 fs-14">{{ $related->user->name ?? 'Instructor' }}</span>
 
                                             @if ($related->discount_price == null)
                                                 <p class="text-black font-weight-semi-bold lh-18 fs-15">
@@ -754,17 +761,17 @@
         </div><!-- end container -->
     </section><!-- end course-details-area -->
     <!--======================================
-                                            END COURSE DETAILS AREA
-                                    ======================================-->
+                                                    END COURSE DETAILS AREA
+                                            ======================================-->
 
     <!--======================================
-                                            START RELATED COURSE AREA
-                                    ======================================-->
+                                                    START RELATED COURSE AREA
+                                            ======================================-->
     <section class="related-course-area bg-gray pt-60px pb-60px">
         <div class="container">
             <div class="related-course-wrap">
                 <h3 class="fs-28 font-weight-semi-bold pb-35px">More Courses by <a href="teacher-detail.html"
-                        class="text-color hover-underline">{{ $course['user']['name'] }}</a></h3>
+                        class="text-color hover-underline">{{ $course->user->name ?? 'Instructor' }}</a></h3>
                 <div class="view-more-carousel-2 owl-action-styled">
                     @foreach ($instructorCourses as $inscourse)
                         @php
@@ -798,7 +805,8 @@
                                 <h5 class="card-title"><a
                                         href="{{ url('course/details/' . $inscourse->id . '/' . $inscourse->course_name_slug) }}">{{ $inscourse->course_name }}</a>
                                 </h5>
-                                <p class="card-text"><a href="teacher-detail.html">{{ $inscourse['user']['name'] }}</a>
+                                <p class="card-text"><a
+                                        href="teacher-detail.html">{{ $inscourse->user->name ?? 'Instructor' }}</a>
                                 </p>
                                 <div class="rating-wrap d-flex align-items-center py-2">
                                     <div class="review-stars">
@@ -832,12 +840,12 @@
         </div><!-- end container -->
     </section><!-- end related-course-area -->
     <!--======================================
-                                            END RELATED COURSE AREA
-                                    ======================================-->
+                                                    END RELATED COURSE AREA
+                                            ======================================-->
 
     <!--======================================
-                                            START CTA AREA
-                                    ======================================-->
+                                                    START CTA AREA
+                                            ======================================-->
     <section class="cta-area pt-60px pb-60px position-relative overflow-hidden">
         <span class="stroke-shape stroke-shape-1"></span>
         <span class="stroke-shape stroke-shape-2"></span>
@@ -882,8 +890,8 @@
         </div><!-- end container -->
     </section><!-- end cta-area -->
     <!--======================================
-                                            END CTA AREA
-                                    ======================================-->
+                                                    END CTA AREA
+                                            ======================================-->
 
 
 
