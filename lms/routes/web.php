@@ -10,6 +10,8 @@ use App\Http\Controllers\Backend\CourseController;
 use App\Http\Controllers\Frontend\IndexController;
 use App\Http\Controllers\Frontend\WishListController;
 use App\Http\Controllers\Frontend\CartController;
+use App\Http\Controllers\Backend\CouponController;
+
 
 
 
@@ -102,14 +104,18 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Admin Coruses All Route 
     Route::controller(AdminController::class)->group(function () {
         Route::get('/admin/all/course', 'AdminAllCourse')->name('admin.all.course');
-        Route::post('/update/course/stauts','UpdateCourseStatus')->name('update.course.stauts');
-        Route::get('/admin/course/details/{id}','AdminCourseDetails')->name('admin.course.details');
+        Route::post('/update/course/stauts', 'UpdateCourseStatus')->name('update.course.stauts');
+        Route::get('/admin/course/details/{id}', 'AdminCourseDetails')->name('admin.course.details');
 
+    });
 
-
+    // Admin Coupon All Route 
+    Route::controller(CouponController::class)->group(function () {
+        Route::get('/admin/all/coupon', 'AdminAllCoupon')->name('admin.all.coupon');
 
 
     });
+
 
 
 });
