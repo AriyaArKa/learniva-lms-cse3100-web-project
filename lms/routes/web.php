@@ -129,9 +129,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Admin All Order Route 
     Route::controller(OrderController::class)->group(function () {
         Route::get('/admin/pending/order', 'AdminPendingOrder')->name('admin.pending.order');
-        Route::get('/admin/order/details/{id}','AdminOrderDetails')->name('admin.order.details');
-        Route::get('/pending-confrim/{id}','PendingToConfirm')->name('pending-confrim');
-        Route::get('/admin/confirm/order','AdminConfirmOrder')->name('admin.confirm.order');  
+        Route::get('/admin/order/details/{id}', 'AdminOrderDetails')->name('admin.order.details');
+        Route::get('/pending-confrim/{id}', 'PendingToConfirm')->name('pending-confrim');
+        Route::get('/admin/confirm/order', 'AdminConfirmOrder')->name('admin.confirm.order');
 
 
 
@@ -183,6 +183,18 @@ Route::middleware(['auth', 'role:instructor'])->group(function () {
         Route::get('/delete/lecture/{id}', 'DeleteLecture')->name('delete.lecture');
         Route::post('/delete/section/{id}', 'DeleteSection')->name('delete.section');
     });
+
+
+    // Instructor All Order Route 
+    Route::controller(OrderController::class)->group(function () {
+        Route::get('/instructor/all/order', 'InstructorAllOrder')->name('instructor.all.order');
+        Route::get('/instructor/order/details/{payment_id}', 'InstructorOrderDetails')->name('instructor.order.details');
+
+
+
+    });
+
+
 });
 //end instructor group middleware
 Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin'])->name('instructor.login');
