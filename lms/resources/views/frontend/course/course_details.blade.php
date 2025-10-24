@@ -45,8 +45,8 @@
 
 @section('home')
     <!-- ================================
-                                                    START BREADCRUMB AREA
-                                                ================================= -->
+                                                        START BREADCRUMB AREA
+                                                    ================================= -->
     <section class="breadcrumb-area pt-50px pb-50px bg-white pattern-bg">
         <div class="container">
             <div class="col-lg-8 mr-auto">
@@ -120,12 +120,12 @@
         </div><!-- end container -->
     </section><!-- end breadcrumb-area -->
     <!-- ================================
-                                                    END BREADCRUMB AREA
-                                                ================================= -->
+                                                        END BREADCRUMB AREA
+                                                    ================================= -->
 
     <!--======================================
-                                                        START COURSE DETAILS AREA
-                                                ======================================-->
+                                                            START COURSE DETAILS AREA
+                                                    ======================================-->
     <section class="course-details-area pb-20px">
         <div class="container">
             <div class="row">
@@ -230,7 +230,7 @@
                                                         {{ count($lecture) }} lectures</span>
                                                 </button>
                                             </div><!-- end card-header -->
-                                            <div id="collapse{{ $sec->id }}" class="collapse show"
+                                            <div id="collapse{{ $sec->id }}" class="collapse"
                                                 aria-labelledby="heading{{ $sec->id }}" data-parent="#accordion">
                                                 <div class="card-body">
                                                     <ul class="generic-list-item">
@@ -637,7 +637,8 @@
                                             onclick="addToCart({{ $course->id }}, '{{ $course->course_name }}', '{{ $course->instructor_id }}', '{{ $course->course_name_slug }}' )"><i
                                                 class="la la-shopping-cart fs-18 mr-1"></i> Add to cart</button>
 
-                                        <button type="button" class="btn theme-btn w-100 theme-btn-white mb-2"><i
+                                        <button type="button" class="btn theme-btn w-100 theme-btn-white mb-2"
+                                            onclick="buyCourse({{ $course->id }}, '{{ $course->course_name }}', '{{ $course->instructor_id }}', '{{ $course->course_name_slug }}' )"><i
                                                 class="la la-shopping-bag mr-1"></i> Buy this course</button>
                                     </div>
 
@@ -767,12 +768,12 @@
         </div><!-- end container -->
     </section><!-- end course-details-area -->
     <!--======================================
-                                                        END COURSE DETAILS AREA
-                                                ======================================-->
+                                                            END COURSE DETAILS AREA
+                                                    ======================================-->
 
     <!--======================================
-                                                        START RELATED COURSE AREA
-                                                ======================================-->
+                                                            START RELATED COURSE AREA
+                                                    ======================================-->
     <section class="related-course-area bg-gray pt-60px pb-60px">
         <div class="container">
             <div class="related-course-wrap">
@@ -846,12 +847,12 @@
         </div><!-- end container -->
     </section><!-- end related-course-area -->
     <!--======================================
-                                                        END RELATED COURSE AREA
-                                                ======================================-->
+                                                            END RELATED COURSE AREA
+                                                    ======================================-->
 
     <!--======================================
-                                                        START CTA AREA
-                                                ======================================-->
+                                                            START CTA AREA
+                                                    ======================================-->
     <section class="cta-area pt-60px pb-60px position-relative overflow-hidden">
         <span class="stroke-shape stroke-shape-1"></span>
         <span class="stroke-shape stroke-shape-2"></span>
@@ -896,8 +897,8 @@
         </div><!-- end container -->
     </section><!-- end cta-area -->
     <!--======================================
-                                                        END CTA AREA
-                                                ======================================-->
+                                                            END CTA AREA
+                                                    ======================================-->
 
 
 
