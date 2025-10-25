@@ -17,6 +17,8 @@ use App\Http\Controllers\Backend\QuestionController;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Controllers\Backend\ReportController;
+
 
 
 
@@ -32,7 +34,7 @@ Route::get('/', [UserController::class, 'Index'])->name('index');
 
 Route::get('/dashboard', function () {
     return view('frontend.dashboard.index');
-})->middleware(['auth','role:user','verified'])->name('dashboard');
+})->middleware(['auth', 'role:user', 'verified'])->name('dashboard');
 
 
 
@@ -151,6 +153,16 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     });
 
 
+    // Admin Report All Route 
+    Route::controller(ReportController::class)->group(function () {
+        Route::get('/report/view', 'ReportView')->name('report.view');
+        Route::post('/search/by/date', 'SearchByDate')->name('search.by.date');
+        Route::post('/search/by/month', 'SearchByMonth')->name('search.by.month');
+        Route::post('/search/by/year', 'SearchByYear')->name('search.by.year');
+    });
+
+
+
 });
 // end admin group middleware
 
@@ -216,6 +228,16 @@ Route::middleware(['auth', 'role:instructor'])->group(function () {
     });
 
 
+    // Instructor Coupon All Route 
+    Route::controller(CouponController::class)->group(function () {
+        Route::get('/instructor/all/coupon', 'InstructorAllCoupon')->name('instructor.all.coupon');
+        Route::get('/instructor/add/coupon', 'InstructorAddCoupon')->name('instructor.add.coupon');
+        Route::post('/instructor/store/coupon', 'InstructorStoreCoupon')->name('instructor.store.coupon');
+        Route::get('/instructor/edit/coupon/{id}', 'InstructorEditCoupon')->name('instructor.edit.coupon');
+        Route::post('/instructor/update/coupon', 'InstructorUpdateCoupon')->name('instructor.update.coupon');
+        Route::get('/instructor/delete/coupon/{id}', 'InstructorDeleteCoupon')->name('instructor.delete.coupon');
+    });
+
 });//end instructor group middleware
 
 ///route accessible for all
@@ -248,6 +270,7 @@ Route::controller(CartController::class)->group(function () {
 
 
 Route::post('/coupon-apply', [CartController::class, 'CouponApply']);
+Route::post('/inscoupon-apply', [CartController::class, 'InsCouponApply']);
 Route::get('/coupon-calculation', [CartController::class, 'CouponCalculation']);
 Route::get('/coupon-remove', [CartController::class, 'CouponRemove']);
 
