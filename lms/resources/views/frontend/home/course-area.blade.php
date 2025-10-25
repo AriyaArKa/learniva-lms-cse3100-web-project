@@ -150,6 +150,17 @@
                                                 @endif
                                             </div>
                                         </div><!-- end card-image -->
+
+                                        @php
+                                            $reviewcount = App\Models\Review::where('course_id', $course->id)
+                                                ->where('status', 1)
+                                                ->latest()
+                                                ->get();
+                                            $avarage = App\Models\Review::where('course_id', $course->id)
+                                                ->where('status', 1)
+                                                ->avg('rating');
+
+                                        @endphp
                                         <div class="card-body">
                                             <h6 class="ribbon ribbon-blue-bg fs-14 mb-3">{{ $course->label }}</h6>
                                             <h5 class="card-title"><a
@@ -158,14 +169,47 @@
                                                     href="#">{{ $course->user->name ?? 'Instructor' }}</a></p>
                                             <div class="rating-wrap d-flex align-items-center py-2">
                                                 <div class="review-stars">
-                                                    <span class="rating-number">4.4</span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star-o"></span>
+                                                    <span class="rating-number">{{ round($avarage, 1) }}</span>
+                                                    @if ($avarage == 0)
+                                                        <span class="la la-star-o"></span>
+                                                        <span class="la la-star-o"></span>
+                                                        <span class="la la-star-o"></span>
+                                                        <span class="la la-star-o"></span>
+                                                        <span class="la la-star-o"></span>
+                                                    @elseif ($avarage == 1 || $avarage < 2)
+                                                        <span class="la la-star"></span>
+                                                        <span class="la la-star-o"></span>
+                                                        <span class="la la-star-o"></span>
+                                                        <span class="la la-star-o"></span>
+                                                        <span class="la la-star-o"></span>
+                                                    @elseif ($avarage == 2 || $avarage < 3)
+                                                        <span class="la la-star"></span>
+                                                        <span class="la la-star"></span>
+                                                        <span class="la la-star-o"></span>
+                                                        <span class="la la-star-o"></span>
+                                                        <span class="la la-star-o"></span>
+                                                    @elseif ($avarage == 3 || $avarage < 4)
+                                                        <span class="la la-star"></span>
+                                                        <span class="la la-star"></span>
+                                                        <span class="la la-star"></span>
+                                                        <span class="la la-star-o"></span>
+                                                        <span class="la la-star-o"></span>
+                                                    @elseif ($avarage == 4 || $avarage < 5)
+                                                        <span class="la la-star"></span>
+                                                        <span class="la la-star"></span>
+                                                        <span class="la la-star"></span>
+                                                        <span class="la la-star"></span>
+                                                        <span class="la la-star-o"></span>
+                                                    @elseif ($avarage == 5 || $avarage < 5)
+                                                        <span class="la la-star"></span>
+                                                        <span class="la la-star"></span>
+                                                        <span class="la la-star"></span>
+                                                        <span class="la la-star"></span>
+                                                        <span class="la la-star"></span>
+                                                    @endif
                                                 </div>
-                                                <span class="rating-total pl-1">(20,230)</span>
+                                                <span class="rating-total pl-1">({{ count($reviewcount) }})</span>
+
                                             </div><!-- end rating-wrap -->
                                             <div class="d-flex justify-content-between align-items-center">
 
@@ -250,7 +294,7 @@
                             onclick="addToCart({{ $item->id }}, '{{ $item->course_name }}','{{ $item->instructor_id }}','{{ $item->course_name_slug }}' )"><i
                                 class="la la-shopping-cart mr-1 fs-18"></i>Add to Cart</button>
 
-                                
+
                         <div class="icon-element icon-element-sm shadow-sm cursor-pointer" title="Add to Wishlist"><i
                                 class="la la-heart-o"></i></div>
                     </div>

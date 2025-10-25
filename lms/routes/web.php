@@ -18,6 +18,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Controllers\Backend\ReportController;
+use App\Http\Controllers\Backend\ReviewController;
+
+
 
 
 
@@ -288,6 +291,8 @@ Route::post('/payment/ipn', [CartController::class, 'paymentIPN'])->name('paymen
 
 
 
+
+Route::post('/store/review', [ReviewController::class, 'StoreReview'])->name('store.review');
 
 
 
