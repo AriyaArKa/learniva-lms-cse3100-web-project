@@ -10,6 +10,10 @@
     
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <!--tagsinput-->
+        <link href="{{ asset('backend/assets/plugins/input-tags/css/tagsinput.css') }}" rel="stylesheet" />
+    <!--tagsinput-->
+
     <!--plugins-->
     <link href="{{ asset('backend/assets/plugins/vectormap/jquery-jvectormap-2.0.2.css') }}" rel="stylesheet" />
     <link href="{{ asset('backend/assets/plugins/simplebar/css/simplebar.css') }}" rel="stylesheet" />
@@ -271,7 +275,9 @@
     <script src="{{ asset('backend/assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('backend/assets/plugins/datatable/js/dataTables.bootstrap5.min.js') }}"></script>
 
-
+<!--tagsinput-->
+	<script src="{{ asset('backend/assets/plugins/input-tags/js/tagsinput.js') }}"></script>
+	<!--tagsinput-->
 
     <script>
         $(document).ready(function () {
@@ -352,6 +358,67 @@
             }
         @endif 
     </script>
+
+
+<!-- Quill.js CSS -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<!-- Quill.js JS -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if the element exists before initializing
+        const editorElement = document.querySelector('#myeditorinstance');
+        if (editorElement) {
+            // Hide the original textarea
+            editorElement.style.display = 'none';
+            
+            // Create a div for Quill editor
+            const quillContainer = document.createElement('div');
+            quillContainer.id = 'quill-editor';
+            quillContainer.style.minHeight = '200px';
+            editorElement.parentNode.insertBefore(quillContainer, editorElement);
+            
+            // Initialize Quill
+            const quill = new Quill('#quill-editor', {
+                theme: 'snow',
+                placeholder: 'Write your blog post content here...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'script': 'sub'}, { 'script': 'super' }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'indent': '-1'}, { 'indent': '+1' }],
+                        [{ 'align': [] }],
+                        ['blockquote', 'code-block'],
+                        ['link', 'image', 'video'],
+                        ['clean']
+                    ]
+                }
+            });
+            
+            // Set initial content if textarea has value
+            if (editorElement.value) {
+                quill.root.innerHTML = editorElement.value;
+            }
+            
+            // Update textarea when Quill content changes
+            quill.on('text-change', function() {
+                editorElement.value = quill.root.innerHTML;
+            });
+            
+            // Update Quill when form is submitted (fallback)
+            const form = editorElement.closest('form');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    editorElement.value = quill.root.innerHTML;
+                });
+            }
+        }
+    });
+</script>
 </body>
 
 </html>

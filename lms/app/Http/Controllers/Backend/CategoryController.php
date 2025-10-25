@@ -126,7 +126,8 @@ class CategoryController extends Controller
 
                 // Try to use Intervention Image for processing, fallback to simple move
                 try {
-                    Image::make($image)->resize(300, 300)->save($full_path);
+                    $processedImage = Image::read($image)->resize(300, 300);
+                    $processedImage->save($full_path);
                     Log::info('Image processed and saved with Intervention Image');
                 } catch (\Exception $imageException) {
                     Log::warning('Intervention Image failed, using simple file move: ' . $imageException->getMessage());
