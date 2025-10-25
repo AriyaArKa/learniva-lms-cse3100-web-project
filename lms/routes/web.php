@@ -343,6 +343,11 @@ Route::post('/payment/ipn', [CartController::class, 'paymentIPN'])->name('paymen
 Route::post('/store/review', [ReviewController::class, 'StoreReview'])->name('store.review');
 
 
+Route::get('/blog/details/{slug}', [BlogController::class, 'BlogDetails']);
+Route::get('/blog/cat/list/{id}', [BlogController::class, 'BlogCatList']);
+Route::get('/blog', [BlogController::class, 'BlogList'])->name('blog');
+
+
 
 
 
