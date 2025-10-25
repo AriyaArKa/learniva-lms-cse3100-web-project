@@ -16,6 +16,8 @@ use App\Http\Controllers\Backend\OrderController;
 use App\Http\Controllers\Backend\QuestionController;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use App\Http\Middleware\RedirectIfAuthenticated;
+
 
 
 
@@ -30,7 +32,9 @@ Route::get('/', [UserController::class, 'Index'])->name('index');
 
 Route::get('/dashboard', function () {
     return view('frontend.dashboard.index');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth','role:user','verified'])->name('dashboard');
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('user/profile', [UserController::class, 'UserProfile'])->name('user.profile');
@@ -147,11 +151,17 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     });
 
 
-
 });
 // end admin group middleware
 
-Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.login');
+
+// Guest routes (login pages) - redirect authenticated users to their dashboard
+Route::middleware(['guest'])->group(function () {
+    Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.login');
+    Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin'])->name('instructor.login');
+});
+
+
 Route::get('/become/instructor', [AdminController::class, 'BecomeInstructor'])->name('become.instructor');
 Route::post('/instructor/register', [AdminController::class, 'InstructorRegister'])->name('instructor.register');
 
@@ -207,9 +217,6 @@ Route::middleware(['auth', 'role:instructor'])->group(function () {
 
 
 });//end instructor group middleware
-
-Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin'])->name('instructor.login');
-
 
 ///route accessible for all
 Route::get('/course/details/{id}/{slug}', [IndexController::class, 'CourseDetails']);

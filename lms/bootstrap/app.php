@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\Role::class,
             'preserve.auth.payment' => \App\Http\Middleware\PreserveAuthForPayment::class,
+            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         ]);
 
         // Exclude SSLCommerz callback routes from CSRF verification

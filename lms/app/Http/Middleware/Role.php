@@ -15,9 +15,22 @@ class Role
      */
     public function handle(Request $request, Closure $next, $role): Response
     {
-        if ($request->user()->role !== $role) {
-            return redirect('dashboard');
+        $userRole = $request->user()->role;
+
+        // If user tries to access a route they don't have permission for
+        if ($userRole !== $role) {
+            // Redirect to their appropriate dashboard
+            switch ($userRole) {
+                case 'admin':
+                    return redirect('/admin/dashboard')->with('error', 'You do not have permission to access that resource.');
+                case 'instructor':
+                    return redirect('/instructor/dashboard')->with('error', 'You do not have permission to access that resource.');
+                case 'user':
+                default:
+                    return redirect('/dashboard')->with('error', 'You do not have permission to access that resource.');
+            }
         }
+        
         return $next($request);
     }
 }
