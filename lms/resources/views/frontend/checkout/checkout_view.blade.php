@@ -79,16 +79,27 @@
                             <div class="divider"><span></span></div>
                             <div class="payment-option-wrap">
                                 <div class="payment-tab is-active">
-                                    <div class="payment-tab-toggle">
-                                        <input checked="" id="bankTransfer" name="cash_delivery" type="radio"
+                                    <div class="payment-tab-toggle mb-3">
+                                        <input id="handCash" name="cash_delivery" type="radio"
                                             value="handcash">
-                                        <label for="bankTransfer">Direct Payment</label>
+                                        <label for="handCash" class="d-flex align-items-center">
+                                            <i class="la la-money mr-2"></i>
+                                            Direct Payment (Cash on Delivery)
+                                        </label>
+                                        <p class="text-muted mt-2 pl-4">Pay directly when you receive access to the course</p>
                                     </div>
 
                                     <div class="payment-tab-toggle">
-                                        <input checked="" id="bankTransfer" name="cash_delivery" type="radio"
-                                            value="stripe">
-                                        <label for="bankTransfer">Stripe Payment</label>
+                                        <input id="sslcommerz" name="cash_delivery" type="radio"
+                                            value="sslcommerz" checked>
+                                        <label for="sslcommerz" class="d-flex align-items-center">
+                                            <i class="la la-credit-card mr-2"></i>
+                                            SSLCommerz Payment Gateway
+                                        </label>
+                                        <p class="text-muted mt-2 pl-4">Secure online payment with cards, mobile banking, and more</p>
+                                        <div class="payment-methods mt-2 pl-4">
+                                            <small class="text-muted">Supports: Visa, MasterCard, bKash, Rocket, Nagad, and more</small>
+                                        </div>
                                     </div>
 
                                 </div><!-- end payment-tab -->

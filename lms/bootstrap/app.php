@@ -13,6 +13,15 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role' => \App\Http\Middleware\Role::class,
+            'preserve.auth.payment' => \App\Http\Middleware\PreserveAuthForPayment::class,
+        ]);
+
+        // Exclude SSLCommerz callback routes from CSRF verification
+        $middleware->validateCsrfTokens(except: [
+            'payment/success',
+            'payment/fail',
+            'payment/cancel',
+            'payment/ipn',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

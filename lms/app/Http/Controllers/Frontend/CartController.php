@@ -20,6 +20,8 @@ use App\Models\Payment;
 use App\Models\Order;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Orderconfirm;
+use App\Services\SSLCommerzService;
+use Illuminate\Support\Facades\Log;
 
 
 class CartController extends Controller
@@ -267,7 +269,7 @@ class CartController extends Controller
         $data->address = $request->address;
         $data->cash_delivery = $request->cash_delivery;
         $data->total_amount = $total_amount;
-        $data->payment_type = 'Direct Payment';
+        $data->payment_type = $request->cash_delivery == 'sslcommerz' ? 'SSLCommerz' : 'Direct Payment';
 
         $data->invoice_no = 'EOS' . mt_rand(10000000, 99999999);
         $data->order_date = Carbon::now()->format('d F Y');
@@ -301,44 +303,209 @@ class CartController extends Controller
 
         } // end foreach 
 
-        $request->session()->forget('cart');
-
         $paymentId = $data->id;
 
-        /// Start Send email to student ///
-        $sendmail = Payment::find($paymentId);
-        $data = [
-            'invoice_no' => $sendmail->invoice_no,
-            'amount' => $total_amount,
-            'name' => $sendmail->name,
-            'email' => $sendmail->email,
-        ];
-
-        Mail::to($request->email)->send(new Orderconfirm($data));
-
-
-        /// End Send email to student /// 
-
-
-        if ($request->cash_delivery == 'stripe') {
-            echo "stripe";
+        if ($request->cash_delivery == 'sslcommerz') {
+            // SSLCommerz Payment Integration
+            $sslcommerz = new SSLCommerzService();
+            
+            $postData = [
+                'total_amount' => $total_amount,
+                'currency' => 'BDT',
+                'tran_id' => $data->invoice_no,
+                'success_url' => url('/payment/success'),
+                'fail_url' => url('/payment/fail'),
+                'cancel_url' => url('/payment/cancel'),
+                'ipn_url' => url('/payment/ipn'),
+                
+                'cus_name' => $request->name,
+                'cus_email' => $request->email,
+                'cus_add1' => $request->address,
+                'cus_phone' => $request->phone,
+                
+                'product_name' => 'Course Purchase',
+                'product_category' => 'Education',
+                'product_profile' => 'general',
+                'num_of_item' => count($request->course_title),
+            ];
+            
+            $response = $sslcommerz->makePayment($postData);
+            
+            if (isset($response['status']) && $response['status'] == 'SUCCESS') {
+                // Store payment session data (don't clear cart yet)
+                Session::put('payment_id', $paymentId);
+                Session::put('pending_payment', true);
+                Session::put('payment_user_id', Auth::id()); // Store user ID for later
+                
+                // Redirect to SSLCommerz payment gateway
+                return redirect($response['GatewayPageURL']);
+            } else {
+                // Payment initialization failed
+                $notification = array(
+                    'message' => 'Payment initialization failed. Please try again.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification);
+            }
         } else {
+            // Direct Payment (Cash on Delivery)
+            $request->session()->forget('cart');
+
+            /// Start Send email to student ///
+            $sendmail = Payment::find($paymentId);
+            $emailData = [
+                'invoice_no' => $sendmail->invoice_no,
+                'amount' => $total_amount,
+                'name' => $sendmail->name,
+                'email' => $sendmail->email,
+            ];
+
+            Mail::to($request->email)->send(new Orderconfirm($emailData));
+
+            /// End Send email to student /// 
 
             $notification = array(
                 'message' => 'Cash Payment Submit Successfully',
                 'alert-type' => 'success'
             );
             return redirect()->route('index')->with($notification);
-
         }
-
 
     }// End Method 
 
 
+    // SSLCommerz Success Callback
+    public function paymentSuccess(Request $request)
+    {
+        try {
+            // Log the incoming data for debugging
+            Log::info('Payment Success Callback Data:', $request->all());
+            
+            $tran_id = $request->input('tran_id');
+            $val_id = $request->input('val_id');
+            $amount = $request->input('amount');
+            $card_type = $request->input('card_type');
+            $store_amount = $request->input('store_amount');
+            $bank_tran_id = $request->input('bank_tran_id');
+            $status = $request->input('status');
 
-
-
+            // For sandbox mode, we'll check if the status is VALID
+            if ($status == 'VALID' || $status == 'VALIDATED') {
+                $payment = Payment::where('invoice_no', $tran_id)->first();
+                
+                if ($payment) {
+                    // Check if payment is already confirmed to avoid duplicate processing
+                    if ($payment->status == 'confirmed') {
+                        return view('frontend.payment.success', compact('payment'));
+                    }
+                    
+                    // Update payment status
+                    $payment->status = 'confirmed';
+                    $payment->transaction_id = $bank_tran_id ?? $val_id;
+                    $payment->save();
+                    
+                    // Don't clear any sessions or cart data here
+                    // This preserves user authentication state
+                    
+                    // Send confirmation email
+                    try {
+                        $emailData = [
+                            'invoice_no' => $payment->invoice_no,
+                            'amount' => $payment->total_amount,
+                            'name' => $payment->name,
+                            'email' => $payment->email,
+                        ];
+                        
+                        Mail::to($payment->email)->send(new Orderconfirm($emailData));
+                    } catch (\Exception $emailError) {
+                        Log::error('Email sending failed: ' . $emailError->getMessage());
+                    }
+                    
+                    // Return success view with payment details
+                    return view('frontend.payment.success', compact('payment'));
+                } else {
+                    Log::error('Payment not found for transaction ID: ' . $tran_id);
+                }
+            } else {
+                Log::error('Invalid payment status: ' . $status);
+            }
+            
+            // If we reach here, something went wrong
+            return view('frontend.payment.fail');
+            
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error('Payment Success Error: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return view('frontend.payment.fail');
+        }
+    }
+    
+    // SSLCommerz Fail Callback
+    public function paymentFail(Request $request)
+    {
+        try {
+            Log::info('Payment Fail Callback Data:', $request->all());
+            
+            $tran_id = $request->input('tran_id');
+            if ($tran_id) {
+                $payment = Payment::where('invoice_no', $tran_id)->first();
+                
+                if ($payment) {
+                    $payment->status = 'failed';
+                    $payment->save();
+                }
+            }
+            
+            return view('frontend.payment.fail');
+        } catch (\Exception $e) {
+            Log::error('Payment Fail Error: ' . $e->getMessage());
+            return view('frontend.payment.fail');
+        }
+    }
+    
+    // SSLCommerz Cancel Callback
+    public function paymentCancel(Request $request)
+    {
+        try {
+            Log::info('Payment Cancel Callback Data:', $request->all());
+            
+            $tran_id = $request->input('tran_id');
+            if ($tran_id) {
+                $payment = Payment::where('invoice_no', $tran_id)->first();
+                
+                if ($payment) {
+                    $payment->status = 'cancelled';
+                    $payment->save();
+                }
+            }
+            
+            return view('frontend.payment.cancel');
+        } catch (\Exception $e) {
+            Log::error('Payment Cancel Error: ' . $e->getMessage());
+            return view('frontend.payment.cancel');
+        }
+    }
+    
+    // SSLCommerz IPN (Instant Payment Notification)
+    public function paymentIPN(Request $request)
+    {
+        $sslcommerz = new SSLCommerzService();
+        $validation = $sslcommerz->validateTransaction($request->all());
+        
+        if ($validation['status'] == 'valid') {
+            $tran_id = $request->tran_id;
+            $payment = Payment::where('invoice_no', $tran_id)->first();
+            
+            if ($payment && $payment->status == 'pending') {
+                $payment->status = 'confirmed';
+                $payment->transaction_id = $request->bank_tran_id;
+                $payment->save();
+            }
+        }
+        
+        return response('OK');
+    }
 
 
     public function BuyToCart(Request $request, $id)

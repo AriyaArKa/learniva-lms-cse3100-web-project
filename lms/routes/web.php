@@ -13,7 +13,9 @@ use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Backend\OrderController;
-
+use App\Http\Controllers\Backend\QuestionController;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 
 
@@ -24,7 +26,6 @@ use App\Http\Controllers\Backend\OrderController;
 
 
 Route::get('/', [UserController::class, 'Index'])->name('index');
-
 
 
 Route::get('/dashboard', function () {
@@ -49,10 +50,16 @@ Route::middleware('auth')->group(function () {
 
 
     // User mycourse All Route 
-    Route::controller(OrderController::class)->group(function(){
-        Route::get('/my/course','MyCourse')->name('my.course'); 
-        Route::get('/course/view/{course_id}','CourseView')->name('course.view'); 
+    Route::controller(OrderController::class)->group(function () {
+        Route::get('/my/course', 'MyCourse')->name('my.course');
+        Route::get('/course/view/{course_id}', 'CourseView')->name('course.view');
 
+
+    });
+
+    // User Question All Route 
+    Route::controller(QuestionController::class)->group(function () {
+        Route::post('/user/question', 'UserQuestion')->name('user.question');
 
     });
 
@@ -137,12 +144,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/admin/order/details/{id}', 'AdminOrderDetails')->name('admin.order.details');
         Route::get('/pending-confrim/{id}', 'PendingToConfirm')->name('pending-confrim');
         Route::get('/admin/confirm/order', 'AdminConfirmOrder')->name('admin.confirm.order');
-
-
-
-
-
-
     });
 
 
@@ -194,17 +195,19 @@ Route::middleware(['auth', 'role:instructor'])->group(function () {
     Route::controller(OrderController::class)->group(function () {
         Route::get('/instructor/all/order', 'InstructorAllOrder')->name('instructor.all.order');
         Route::get('/instructor/order/details/{payment_id}', 'InstructorOrderDetails')->name('instructor.order.details');
-        Route::get('/instructor/order/invoice/{payment_id}','InstructorOrderInvoice')->name('instructor.order.invoice');
+        Route::get('/instructor/order/invoice/{payment_id}', 'InstructorOrderInvoice')->name('instructor.order.invoice');
+    });
 
-
-
-
-
+    // Question All Order Route 
+    Route::controller(QuestionController::class)->group(function () {
+        Route::get('/instructor/all/question', 'InstructorAllQuestion')->name('instructor.all.question');
+        Route::get('/question/details/{id}', 'QuestionDetails')->name('question.details');
+        Route::post('/instructor/replay', 'InstructorReplay')->name('instructor.replay');
     });
 
 
-});
-//end instructor group middleware
+});//end instructor group middleware
+
 Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin'])->name('instructor.login');
 
 
@@ -244,6 +247,14 @@ Route::get('/coupon-remove', [CartController::class, 'CouponRemove']);
 /// Checkout Page Route 
 Route::get('/checkout', [CartController::class, 'CheckoutCreate'])->name('checkout');
 Route::post('/payment', [CartController::class, 'Payment'])->name('payment');
+
+
+
+// SSLCommerz Payment Routes
+Route::match(['get', 'post'], '/payment/success', [CartController::class, 'paymentSuccess'])->name('payment.success')->middleware('preserve.auth.payment');
+Route::match(['get', 'post'], '/payment/fail', [CartController::class, 'paymentFail'])->name('payment.fail')->middleware('preserve.auth.payment');
+Route::match(['get', 'post'], '/payment/cancel', [CartController::class, 'paymentCancel'])->name('payment.cancel')->middleware('preserve.auth.payment');
+Route::post('/payment/ipn', [CartController::class, 'paymentIPN'])->name('payment.ipn');
 
 
 
