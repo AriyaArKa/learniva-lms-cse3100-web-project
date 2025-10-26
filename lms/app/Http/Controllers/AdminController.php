@@ -256,7 +256,7 @@ class AdminController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email',
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:500',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:3',
             'roles' => 'required|exists:roles,id'
         ]);
 

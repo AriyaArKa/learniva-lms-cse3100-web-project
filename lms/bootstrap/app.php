@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\Role::class,
             'preserve.auth.payment' => \App\Http\Middleware\PreserveAuthForPayment::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'spatie_role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
 
         // Exclude SSLCommerz callback routes from CSRF verification
