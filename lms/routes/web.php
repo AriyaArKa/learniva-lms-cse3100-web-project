@@ -349,6 +349,8 @@ Route::get('/blog', [BlogController::class, 'BlogList'])->name('blog');
 
 
 
+Route::post('/mark-notification-as-read/{notification}', [CartController::class, 'MarkAsRead']);
+
 
 
 

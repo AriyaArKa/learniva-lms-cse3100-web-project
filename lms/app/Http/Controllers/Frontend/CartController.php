@@ -22,6 +22,10 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\Orderconfirm;
 use App\Services\SSLCommerzService;
 use Illuminate\Support\Facades\Log;
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\OrderComplete;
+
 
 
 class CartController extends Controller
@@ -192,25 +196,26 @@ class CartController extends Controller
 
     }// End Method 
 
-    public function InsCouponApply(Request $request){
+    public function InsCouponApply(Request $request)
+    {
 
-        $coupon = Coupon::where('coupon_name',$request->coupon_name)->where('coupon_validity','>=',Carbon::now()->format('Y-m-d'))->first(); 
+        $coupon = Coupon::where('coupon_name', $request->coupon_name)->where('coupon_validity', '>=', Carbon::now()->format('Y-m-d'))->first();
 
         if ($coupon) {
             if ($coupon->course_id == $request->course_id && $coupon->instructor_id == $request->instructor_id) {
 
-                Session::put('coupon',[
+                Session::put('coupon', [
                     'coupon_name' => $coupon->coupon_name,
                     'coupon_discount' => $coupon->coupon_discount,
-                    'discount_amount' => round(Cart::total() * $coupon->coupon_discount/100),
-                    'total_amount' => round(Cart::total() - Cart::total() * $coupon->coupon_discount/100 )
+                    'discount_amount' => round(Cart::total() * $coupon->coupon_discount / 100),
+                    'total_amount' => round(Cart::total() - Cart::total() * $coupon->coupon_discount / 100)
                 ]);
-    
+
                 return response()->json(array(
                     'validity' => true,
                     'success' => 'Coupon Applied Successfully'
-                )); 
-                 
+                ));
+
             } else {
                 return response()->json(['error' => 'Coupon Criteria Not Met for this course and instructor']);
             }
@@ -280,6 +285,8 @@ class CartController extends Controller
     }// End Method 
     public function Payment(Request $request)
     {
+        $user = User::where('role', 'instructor')->get();
+
 
         if (Session::has('coupon')) {
             $total_amount = Session::get('coupon')['total_amount'];
@@ -335,7 +342,7 @@ class CartController extends Controller
         if ($request->cash_delivery == 'sslcommerz') {
             // SSLCommerz Payment Integration
             $sslcommerz = new SSLCommerzService();
-            
+
             $postData = [
                 'total_amount' => $total_amount,
                 'currency' => 'BDT',
@@ -344,26 +351,26 @@ class CartController extends Controller
                 'fail_url' => url('/payment/fail'),
                 'cancel_url' => url('/payment/cancel'),
                 'ipn_url' => url('/payment/ipn'),
-                
+
                 'cus_name' => $request->name,
                 'cus_email' => $request->email,
                 'cus_add1' => $request->address,
                 'cus_phone' => $request->phone,
-                
+
                 'product_name' => 'Course Purchase',
                 'product_category' => 'Education',
                 'product_profile' => 'general',
                 'num_of_item' => count($request->course_title),
             ];
-            
+
             $response = $sslcommerz->makePayment($postData);
-            
+
             if (isset($response['status']) && $response['status'] == 'SUCCESS') {
                 // Store payment session data (don't clear cart yet)
                 Session::put('payment_id', $paymentId);
                 Session::put('pending_payment', true);
                 Session::put('payment_user_id', Auth::id()); // Store user ID for later
-                
+
                 // Redirect to SSLCommerz payment gateway
                 return redirect($response['GatewayPageURL']);
             } else {
@@ -389,7 +396,12 @@ class CartController extends Controller
 
             Mail::to($request->email)->send(new Orderconfirm($emailData));
 
-            /// End Send email to student /// 
+            /// End Send email to student ///
+
+            //send notification
+            Notification::send($user, new OrderComplete($request->name));
+
+
 
             $notification = array(
                 'message' => 'Cash Payment Submit Successfully',
@@ -407,7 +419,7 @@ class CartController extends Controller
         try {
             // Log the incoming data for debugging
             Log::info('Payment Success Callback Data:', $request->all());
-            
+
             $tran_id = $request->input('tran_id');
             $val_id = $request->input('val_id');
             $amount = $request->input('amount');
@@ -419,21 +431,21 @@ class CartController extends Controller
             // For sandbox mode, we'll check if the status is VALID
             if ($status == 'VALID' || $status == 'VALIDATED') {
                 $payment = Payment::where('invoice_no', $tran_id)->first();
-                
+
                 if ($payment) {
                     // Check if payment is already confirmed to avoid duplicate processing
                     if ($payment->status == 'confirmed') {
                         return view('frontend.payment.success', compact('payment'));
                     }
-                    
+
                     // Update payment status
                     $payment->status = 'confirmed';
                     $payment->transaction_id = $bank_tran_id ?? $val_id;
                     $payment->save();
-                    
+
                     // Don't clear any sessions or cart data here
                     // This preserves user authentication state
-                    
+
                     // Send confirmation email
                     try {
                         $emailData = [
@@ -442,12 +454,12 @@ class CartController extends Controller
                             'name' => $payment->name,
                             'email' => $payment->email,
                         ];
-                        
+
                         Mail::to($payment->email)->send(new Orderconfirm($emailData));
                     } catch (\Exception $emailError) {
                         Log::error('Email sending failed: ' . $emailError->getMessage());
                     }
-                    
+
                     // Return success view with payment details
                     return view('frontend.payment.success', compact('payment'));
                 } else {
@@ -456,10 +468,10 @@ class CartController extends Controller
             } else {
                 Log::error('Invalid payment status: ' . $status);
             }
-            
+
             // If we reach here, something went wrong
             return view('frontend.payment.fail');
-            
+
         } catch (\Exception $e) {
             // Log the error for debugging
             Log::error('Payment Success Error: ' . $e->getMessage());
@@ -467,70 +479,70 @@ class CartController extends Controller
             return view('frontend.payment.fail');
         }
     }
-    
+
     // SSLCommerz Fail Callback
     public function paymentFail(Request $request)
     {
         try {
             Log::info('Payment Fail Callback Data:', $request->all());
-            
+
             $tran_id = $request->input('tran_id');
             if ($tran_id) {
                 $payment = Payment::where('invoice_no', $tran_id)->first();
-                
+
                 if ($payment) {
                     $payment->status = 'failed';
                     $payment->save();
                 }
             }
-            
+
             return view('frontend.payment.fail');
         } catch (\Exception $e) {
             Log::error('Payment Fail Error: ' . $e->getMessage());
             return view('frontend.payment.fail');
         }
     }
-    
+
     // SSLCommerz Cancel Callback
     public function paymentCancel(Request $request)
     {
         try {
             Log::info('Payment Cancel Callback Data:', $request->all());
-            
+
             $tran_id = $request->input('tran_id');
             if ($tran_id) {
                 $payment = Payment::where('invoice_no', $tran_id)->first();
-                
+
                 if ($payment) {
                     $payment->status = 'cancelled';
                     $payment->save();
                 }
             }
-            
+
             return view('frontend.payment.cancel');
         } catch (\Exception $e) {
             Log::error('Payment Cancel Error: ' . $e->getMessage());
             return view('frontend.payment.cancel');
         }
     }
-    
+
     // SSLCommerz IPN (Instant Payment Notification)
     public function paymentIPN(Request $request)
     {
         $sslcommerz = new SSLCommerzService();
         $validation = $sslcommerz->validateTransaction($request->all());
-        
+
         if ($validation['status'] == 'valid') {
             $tran_id = $request->tran_id;
             $payment = Payment::where('invoice_no', $tran_id)->first();
-            
+
             if ($payment && $payment->status == 'pending') {
                 $payment->status = 'confirmed';
                 $payment->transaction_id = $request->bank_tran_id;
                 $payment->save();
             }
         }
-        
+
         return response('OK');
     }
 
@@ -585,6 +597,30 @@ class CartController extends Controller
     }// End Method 
 
 
+
+    public function MarkAsRead(Request $request, $notificationId)
+    {
+
+        $user = Auth::user();
+        // If the User model doesn't use the Notifiable trait, query the notifications table directly
+        $notification = \Illuminate\Notifications\DatabaseNotification::where('id', $notificationId)
+            ->where('notifiable_id', $user->id)
+            ->where('notifiable_type', get_class($user))
+            ->first();
+
+        if ($notification) {
+            // mark as read by setting read_at
+            $notification->update(['read_at' => Carbon::now()]);
+        }
+
+        // count unread notifications directly from the notifications table
+        $unreadCount = \Illuminate\Notifications\DatabaseNotification::where('notifiable_id', $user->id)
+            ->whereNull('read_at')
+            ->count();
+
+        return response()->json(['count' => $unreadCount]);
+
+    }// End Method 
 
 
 
