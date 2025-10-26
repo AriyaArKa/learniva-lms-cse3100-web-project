@@ -1,6 +1,8 @@
 @extends('frontend.master')
 @section('home')
-
+@section('title')
+{{ $blog->post_title  }} | Algo Oasis Learn
+@endsection
 <!-- ================================
     START BREADCRUMB AREA
 ================================= -->

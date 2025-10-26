@@ -1,6 +1,8 @@
 @extends('frontend.master')
 @section('home')
-
+@section('title')
+Algo Oasis
+@endsection
 
     <!--================================
                              START HERO AREA

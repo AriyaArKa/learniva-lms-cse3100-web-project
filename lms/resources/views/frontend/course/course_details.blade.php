@@ -1,4 +1,7 @@
 @extends('frontend.master')
+@section('title')
+{{ $blog->post_title  }} | Algo Oasis
+@endsection
 
 <style>
     /* Custom styles for course description content */

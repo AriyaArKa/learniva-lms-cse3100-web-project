@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\SmtpSetting;
-use Intervention\Image\Facades\Image;
+use App\Models\SiteSetting;
+use Intervention\Image\Laravel\Facades\Image;
 
 class SettingController extends Controller
 {
@@ -67,6 +68,85 @@ class SettingController extends Controller
             'alert-type' => 'success'
         );
         return redirect()->back()->with($notification);
+
+    }// End Method 
+
+    public function SiteSetting()
+    {
+        $site = SiteSetting::first();
+
+        // If no site settings exist, create a default one
+        if (!$site) {
+            $site = SiteSetting::create([
+                'phone' => '',
+                'email' => '',
+                'address' => '',
+                'facebook' => '',
+                'twitter' => '',
+                'copyright' => '',
+                'logo' => '',
+            ]);
+        }
+
+        return view('admin.backend.setting.site_setting', compact('site'));
+
+    }// End Method 
+
+    public function UpdateSite(Request $request)
+    {
+
+        $site_id = $request->id;
+
+        if ($request->file('logo')) {
+
+            $image = $request->file('logo');
+            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+
+            // Ensure the upload/logo directory exists
+            $upload_path = public_path('upload/logo/');
+            if (!file_exists($upload_path)) {
+                mkdir($upload_path, 0755, true);
+            }
+
+            Image::read($image)->resize(140, 41)->save($upload_path . $name_gen);
+            $save_url = 'upload/logo/' . $name_gen;
+
+            SiteSetting::find($site_id)->update([
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'address' => $request->address,
+                'facebook' => $request->facebook,
+                'twitter' => $request->twitter,
+                'copyright' => $request->copyright,
+                'logo' => $save_url,
+
+            ]);
+
+            $notification = array(
+                'message' => 'Site Setting Updated with image Successfully',
+                'alert-type' => 'success'
+            );
+            return redirect()->back()->with($notification);
+
+        } else {
+
+            SiteSetting::find($site_id)->update([
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'address' => $request->address,
+                'facebook' => $request->facebook,
+                'twitter' => $request->twitter,
+                'copyright' => $request->copyright,
+
+            ]);
+
+            $notification = array(
+                'message' => 'Site Setting Updated without image Successfully',
+                'alert-type' => 'success'
+            );
+            return redirect()->back()->with($notification);
+
+        } // end else 
 
     }// End Method 
 

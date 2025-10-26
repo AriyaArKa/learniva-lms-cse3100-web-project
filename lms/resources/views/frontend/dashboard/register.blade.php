@@ -1,6 +1,8 @@
 @extends('frontend.master')
 @section('home')
-
+@section('title')
+Register Page | Algo Oasis
+@endsection
 
 
     <!-- ================================
