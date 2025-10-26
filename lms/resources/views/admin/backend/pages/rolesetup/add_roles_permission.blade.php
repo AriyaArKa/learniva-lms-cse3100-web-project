@@ -2,11 +2,11 @@
 @section('admin')
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
-<style>
-    .form-check-label{
-        text-transform: capitalize;
-    }
-</style>
+    <style>
+        .form-check-label {
+            text-transform: capitalize;
+        }
+    </style>
 
     <div class="page-content">
         <!--breadcrumb-->
@@ -27,19 +27,18 @@
         <div class="card">
             <div class="card-body p-4">
 
-               <form id="myForm" action="{{ route('role.permission.store') }}" method="post" class="row g-3" enctype="multipart/form-data">
+                <form id="myForm" action="{{ route('role.permission.store') }}" method="post" class="row g-3"
+                    enctype="multipart/form-data">
                     @csrf
 
                     <div class="form-group col-md-6">
                         <label for="input1" class="form-label"> Roles Name</label>
-                                    <select name="role_id" class="form-select mb-3" aria-label="Default select example">
+                        <select name="role_id" class="form-select mb-3" aria-label="Default select example">
 
 
                             <option selected="" disabled>Open Roles</option>
                             @foreach ($roles as $role)
-                                              <option value="{{ $role->id }}">{{ $role->name }}</option>
-
-
+                                <option value="{{ $role->id }}">{{ $role->name }}</option>
                             @endforeach
 
                         </select>
@@ -51,8 +50,10 @@
 
                     @foreach ($groups as $group)
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault{{ $loop->index }}">
-                            <label class="form-check-label" for="flexCheckDefault{{ $loop->index }}"> {{ $group->group_name }}</label>
+                            <input class="form-check-input" type="checkbox" value=""
+                                id="flexCheckDefault{{ $loop->index }}">
+                            <label class="form-check-label" for="flexCheckDefault{{ $loop->index }}">
+                                {{ $group->group_name }}</label>
                         </div>
 
                         <hr>
@@ -61,8 +62,10 @@
                             <div class="col-3">
 
                                 <div class="form-check">
-                                  <input class="form-check-input" type="checkbox" value="" id="flexCheckMain{{ $loop->index }}">
-                        <label class="form-check-label" for="flexCheckMain{{ $loop->index }}">Permission All </label>
+                                    <input class="form-check-input" type="checkbox" value=""
+                                        id="flexCheckMain{{ $loop->index }}">
+                                    <label class="form-check-label" for="flexCheckMain{{ $loop->index }}">Permission All
+                                    </label>
                                 </div>
 
                             </div>
@@ -86,7 +89,6 @@
                         </div>
 
                         {{-- // end row --}}
-
                     @endforeach
 
                     <div class="col-md-12">
@@ -100,17 +102,17 @@
     </div>
 
 
-<script>
-    // Handle "Permission All" checkboxes for each group
-    $('[id^="flexCheckMain"]').click(function(){
-        var groupIndex = $(this).attr('id').replace('flexCheckMain', '');
-        var groupContainer = $(this).closest('.row');
-        
-        if ($(this).is(':checked')) {
-            groupContainer.find('input[type=checkbox]').prop('checked', true);
-        } else {
-            groupContainer.find('input[type=checkbox]').prop('checked', false);
-        }
-    });
-</script>
+    <script>
+        // Handle "Permission All" checkboxes for each group
+        $('[id^="flexCheckMain"]').click(function() {
+            var groupIndex = $(this).attr('id').replace('flexCheckMain', '');
+            var groupContainer = $(this).closest('.row');
+
+            if ($(this).is(':checked')) {
+                groupContainer.find('input[type=checkbox]').prop('checked', true);
+            } else {
+                groupContainer.find('input[type=checkbox]').prop('checked', false);
+            }
+        });
+    </script>
 @endsection
