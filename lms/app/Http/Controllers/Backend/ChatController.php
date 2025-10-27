@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\ChatMessage;
+use App\Events\MessageSent;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,17 +16,36 @@ class ChatController extends Controller
     {
 
         $request->validate([
-            'msg' => 'required'
+            'msg' => 'required',
+            'receiver_id' => 'required|exists:users,id'
         ]);
 
-        ChatMessage::create([
+        // Prevent sending messages to oneself
+        if ($request->receiver_id == Auth::user()->id) {
+            return response()->json([
+                'message' => 'You cannot send messages to yourself',
+                'error' => true
+            ], 400);
+        }
+
+        $message = ChatMessage::create([
             'sender_id' => Auth::user()->id,
             'receiver_id' => $request->receiver_id,
             'msg' => $request->msg,
             'created_at' => Carbon::now(),
         ]);
 
-        return response()->json(['message' => 'Message Send Successfully']);
+        // Broadcast the message for real-time updates
+        broadcast(new MessageSent($message))->toOthers();
+
+        // Load sender relationship for consistent data structure
+        $message->load('sender');
+        $message->user = $message->sender;
+
+        return response()->json([
+            'message' => 'Message Send Successfully',
+            'data' => $message
+        ]);
 
     } // End Method 
 
@@ -44,7 +64,10 @@ class ChatController extends Controller
                 return [$chat->sender, $chat->receiver];
             }
             return [$chat->receiver, $chat->sender];
-        })->unique();
+        })->unique()->filter(function ($user) {
+            // Remove self from the user list
+            return $user && $user->id !== Auth::id();
+        })->values();
 
         return $users;
     }// End Method
@@ -61,7 +84,13 @@ class ChatController extends Controller
             })->orWhere(function ($q) use ($userId) {
                 $q->where('sender_id', $userId);
                 $q->where('receiver_id', Auth::id());
-            })->with('user')->get();
+            })->with(['sender', 'receiver'])->orderBy('created_at', 'ASC')->get();
+
+            // Transform messages to include user info based on sender
+            $messages = $messages->map(function ($message) {
+                $message->user = $message->sender;
+                return $message;
+            });
 
             return response()->json([
                 'user' => $user,
