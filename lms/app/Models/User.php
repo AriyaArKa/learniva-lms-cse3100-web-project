@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable,HasRoles;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -57,25 +57,28 @@ class User extends Authenticatable
         return Cache::has('user-is-online' . $this->id);
     }
 
-    public static function getpermissionGroups(){
+    public static function getpermissionGroups()
+    {
         $permission_groups = DB::table('permissions')->select('group_name')->groupBy('group_name')->get();
         return $permission_groups;
     }// End Method 
 
-    public static function getpermissionByGroupName($group_name){
+    public static function getpermissionByGroupName($group_name)
+    {
 
         $permissions = DB::table('permissions')
-                        ->select('name','id')
-                        ->where('group_name',$group_name)
-                        ->get();
+            ->select('name', 'id')
+            ->where('group_name', $group_name)
+            ->get();
 
-                        return $permissions;
+        return $permissions;
     } // End Method 
 
-    public static function roleHasPermissions($role,$permissions){
+    public static function roleHasPermissions($role, $permissions)
+    {
 
-        $hasPermission =  true;
-        foreach ($permissions as  $permission) {
+        $hasPermission = true;
+        foreach ($permissions as $permission) {
             if (!$role->hasPermissionTo($permission->name)) {
                 $hasPermission = false;
             }
@@ -83,5 +86,16 @@ class User extends Authenticatable
         }
 
     }// End Method 
+
+    // User course enrollments
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'user_id', 'id');
+    }
+
+    public function enrolledCourses()
+    {
+        return $this->hasMany(Order::class, 'user_id', 'id');
+    }
 
 }

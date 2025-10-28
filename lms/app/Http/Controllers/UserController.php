@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
+use App\Models\Order;
+use App\Models\Course;
 
 
 
@@ -172,6 +174,45 @@ class UserController extends Controller
     public function PrivacyPolicy()
     {
         return view('frontend.pages.privacy_policy');
+    } // End Method
+
+    public function UserDashboard()
+    {
+        $id = Auth::user()->id;
+        $profileData = User::find($id);
+
+        // Get all enrolled courses (total orders for this user)
+        $enrolledCourses = Order::where('user_id', $id)->count();
+
+        // Get unique courses (in case user ordered same course multiple times)
+        $totalCourses = Order::where('user_id', $id)
+            ->distinct('course_id')
+            ->count('course_id');
+
+        // Get active courses (courses with status = 1)
+        $activeCourses = Order::where('user_id', $id)
+            ->whereHas('course', function ($query) {
+                $query->where('status', 1);
+            })
+            ->distinct('course_id')
+            ->count('course_id');
+
+        // Get completed courses (for now, let's assume courses with status = 0 are completed)
+        // You can modify this logic based on your actual completion tracking
+        $completedCourses = Order::where('user_id', $id)
+            ->whereHas('course', function ($query) {
+                $query->where('status', 0);
+            })
+            ->distinct('course_id')
+            ->count('course_id');
+
+        return view('frontend.dashboard.index', compact(
+            'profileData',
+            'enrolledCourses',
+            'activeCourses',
+            'completedCourses',
+            'totalCourses'
+        ));
     } // End Method
 
 

@@ -38,9 +38,7 @@ Route::get('/terms-conditions', [UserController::class, 'TermsConditions'])->nam
 Route::get('/privacy-policy', [UserController::class, 'PrivacyPolicy'])->name('privacy.policy');
 
 
-Route::get('/dashboard', function () {
-    return view('frontend.dashboard.index');
-})->middleware(['auth', 'role:user', 'verified'])->name('dashboard');
+Route::get('/dashboard', [UserController::class, 'UserDashboard'])->middleware(['auth', 'role:user', 'verified'])->name('dashboard');
 
 
 
