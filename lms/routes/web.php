@@ -26,21 +26,16 @@ use App\Http\Controllers\Backend\ChatController;
 use App\Services\GeminiService;
 
 
-
-
-
-
-
-
-
-
-
 // Route::get('/', function () {
 //     return view('welcome');
 // });
 
 
 Route::get('/', [UserController::class, 'Index'])->name('index');
+
+// Terms & Privacy Pages
+Route::get('/terms-conditions', [UserController::class, 'TermsConditions'])->name('terms.conditions');
+Route::get('/privacy-policy', [UserController::class, 'PrivacyPolicy'])->name('privacy.policy');
 
 
 Route::get('/dashboard', function () {
@@ -265,13 +260,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/update/admin/{id}', 'UpdateAdmin')->name('update.admin');
         Route::get('/delete/admin/{id}', 'DeleteAdmin')->name('delete.admin');
 
-
-
     });
-
-
-
-
 
 });
 // end admin group middleware
@@ -425,13 +414,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/instructor/live/chat', [ChatController::class, 'LiveChat'])->name('instructor.live.chat');
 });
 
-
-
-
-
-
-
 ///end route accessible for all
+
+
+
 
 // Test route for Gemini AI
 Route::get('/test-gemini', function (GeminiService $gemini) {

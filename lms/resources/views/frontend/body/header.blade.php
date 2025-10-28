@@ -1,17 +1,18 @@
-
 @php
     $setting = App\Models\SiteSetting::find(1);
 @endphp
 
-    <header class="header-menu-area bg-white">
+<header class="header-menu-area bg-white">
     <div class="header-top pr-150px pl-150px border-bottom border-bottom-gray py-1">
         <div class="container-fluid">
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <div class="header-widget">
                         <ul class="generic-list-item d-flex flex-wrap align-items-center fs-14">
-                            <li class="d-flex align-items-center pr-3 mr-3 border-right border-right-gray"><i class="la la-phone mr-1"></i><a href="tel:00123456789"> {{ $setting->phone }}</a></li>
-                            <li class="d-flex align-items-center"><i class="la la-envelope-o mr-1"></i><a href="mailto:{{ $setting->email }}">{{ $setting->email }}</a></li>
+                            <li class="d-flex align-items-center pr-3 mr-3 border-right border-right-gray"><i
+                                    class="la la-phone mr-1"></i><a href="tel:00123456789"> {{ $setting->phone }}</a></li>
+                            <li class="d-flex align-items-center"><i class="la la-envelope-o mr-1"></i><a
+                                    href="mailto:{{ $setting->email }}">{{ $setting->email }}</a></li>
                         </ul>
                     </div><!-- end header-widget -->
                 </div><!-- end col-lg-6 -->
@@ -71,7 +72,8 @@
                 <div class="row align-items-center">
                     <div class="col-lg-2">
                         <div class="logo-box">
-                            <a href="{{ url('/') }}" class="logo"><img src="{{ asset($setting->logo)}}" alt="logo"></a>
+                            <a href="{{ url('/') }}" class="logo"><img src="{{ asset($setting->logo) }}"
+                                    alt="logo"></a>
                             <div class="user-btn-action">
                                 <div class="search-menu-toggle icon-element icon-element-sm shadow-sm mr-2"
                                     data-toggle="tooltip" data-placement="top" title="Search">
@@ -143,14 +145,16 @@
                                     <li>
                                         <a href="#">courses <i class="la la-angle-down fs-12"></i></a>
                                         <ul class="dropdown-menu-item">
-                                            <li><a href="course-grid.html">course grid</a></li>
-                                            <li><a href="course-list.html">course list</a></li>
-
+                                            @foreach ($categories as $category)
+                                                <li><a
+                                                        href="{{ url('category/' . $category->id . '/' . $category->category_slug) }}">{{ $category->category_name }}</a>
+                                                </li>
+                                            @endforeach
                                         </ul>
                                     </li>
 
                                     <li>
-                                        <a href="{{ route('blog') }}">blog  </a>
+                                        <a href="{{ route('blog') }}">blog </a>
                                     </li>
                                 </ul><!-- end ul -->
                             </nav><!-- end main-menu -->
@@ -159,35 +163,37 @@
                                     <li>
                                         <p class="shop-cart-btn d-flex align-items-center">
                                             <i class="la la-shopping-cart"></i>
-                        <span class="product-count" id="cartQty">0</span>
+                                            <span class="product-count" id="cartQty">0</span>
 
                                         </p>
 
-                                                            <ul class="cart-dropdown-menu">
+                                        <ul class="cart-dropdown-menu">
 
 
-                                        <div id="miniCart">
+                                            <div id="miniCart">
 
-                                        </div>
-                       <br><br>
-
-
+                                            </div>
+                                            <br><br>
 
 
-                                    <li class="media media-card">
-                                        <div class="media-body fs-16">
-                                           <p class="text-black font-weight-semi-bold lh-18">Total: $<span class="cart-total" id="cartSubTotal"> </span>  </p>
-                                        </div>
+
+
+                                            <li class="media media-card">
+                                                <div class="media-body fs-16">
+                                                    <p class="text-black font-weight-semi-bold lh-18">Total: $<span
+                                                            class="cart-total" id="cartSubTotal"> </span> </p>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('mycart') }}" class="btn theme-btn w-100">Go to
+                                                    cart <i class="la la-arrow-right icon ml-1"></i></a>
+                                            </li>
+                                        </ul>
                                     </li>
-                                    <li>
-                                         <a href="{{ route('mycart') }}" class="btn theme-btn w-100">Go to cart <i class="la la-arrow-right icon ml-1"></i></a>
-                                    </li>
-                                </ul>
-                                </li>
                                 </ul>
                             </div><!-- end shop-cart -->
                             <div class="nav-right-button">
-                                <a href="admission.html" class="btn theme-btn d-none d-lg-inline-block"><i
+                                <a href="{{ route('login') }}" class="btn theme-btn d-none d-lg-inline-block"><i
                                         class="la la-user-plus mr-1"></i> Admission</a>
                             </div><!-- end nav-right-button -->
                         </div><!-- end menu-wrapper -->
