@@ -129,6 +129,14 @@
 
 <script>
 export default {
+  props: {
+    initialCurrentUser: {
+      type: Object,
+      required: false,
+      default: null
+    }
+  },
+
   data() {
     return {
       users: [],
@@ -141,6 +149,7 @@ export default {
       currentUserId: null,
       currentUserPhoto: '',
       currentUserName: '',
+      currentUserRole: '',
     }
   },
 
@@ -153,8 +162,25 @@ export default {
   },
 
   created() {
+    // Set current user FIRST before anything else
+    if (this.initialCurrentUser) {
+      console.log('=== INITIALIZING CURRENT USER FROM PROP ===');
+      this.currentUserId = parseInt(this.initialCurrentUser.id);
+      this.currentUserName = this.initialCurrentUser.name;
+      this.currentUserRole = this.initialCurrentUser.role;
+      this.currentUserPhoto = this.getImageUrl(this.initialCurrentUser);
+
+      console.log('Current User Set:', {
+        id: this.currentUserId,
+        name: this.currentUserName,
+        role: this.currentUserRole,
+        photo: this.currentUserPhoto
+      });
+      console.log('=======================================');
+    }
+
+    // Now that currentUserId is set, we can load users and messages
     this.getCurrentUser();
-    // getAllUser is now called from getCurrentUser after currentUserId is set
   },
 
   mounted() {
@@ -164,18 +190,33 @@ export default {
 
   methods: {
     getCurrentUser() {
+      console.log('=== GETTING CURRENT USER ===');
+
+      // If we already have currentUserId from props (set in created()), just load users
+      if (this.currentUserId) {
+        console.log('Current user already set from prop, loading users...');
+        this.getAllUser();
+        return;
+      }
+
+      // Fallback to API call if prop was not available
+      console.log('No prop found, fetching from API...');
       axios.get('/api/current-user')
         .then((res) => {
+          console.log('API Response:', res.data);
+
           // Ensure we get the ID as a number for proper comparison
           this.currentUserId = parseInt(res.data.id);
           this.currentUserName = res.data.name;
+          this.currentUserRole = res.data.role;
           this.currentUserPhoto = this.getImageUrl(res.data);
-          console.log('Current user loaded:', {
-            id: this.currentUserId,
-            name: this.currentUserName,
-            photo: this.currentUserPhoto,
-            rawData: res.data
-          });
+
+          console.log('=== CURRENT USER SET FROM API ===');
+          console.log('ID:', this.currentUserId, '(type:', typeof this.currentUserId, ')');
+          console.log('Name:', this.currentUserName);
+          console.log('Photo:', this.currentUserPhoto);
+          console.log('Raw Data:', res.data);
+          console.log('=================================');
 
           // Load users after current user is set
           this.getAllUser();
@@ -191,9 +232,17 @@ export default {
         return '/upload/no_image.jpg';
       }
 
-      const basePath = user.role === 'user' ? '/upload/user_images/' : '/upload/instructor_images/';
+      // Determine the correct path based on role
+      let basePath = '/upload/user_images/'; // default for regular users
+
+      if (user.role === 'instructor') {
+        basePath = '/upload/instructor_images/';
+      } else if (user.role === 'admin') {
+        basePath = '/upload/admin_images/';
+      }
+
       const imageUrl = basePath + user.photo;
-      console.log('Generated image URL:', imageUrl, 'for user:', user.name); // Debug log
+      console.log('Generated image URL:', imageUrl, 'for user:', user.name, 'role:', user.role); // Debug log
       return imageUrl;
     },
 
@@ -264,19 +313,32 @@ export default {
         return;
       }
 
+      console.log('=== LOADING MESSAGES FOR USER:', userId, '===');
+      console.log('Current User ID:', this.currentUserId);
+
       axios.get('/user-message/' + userId)
         .then((res) => {
           this.allmessages = res.data;
           this.selectedUser = userId;
-          console.log('Messages loaded for user:', userId, 'Current user ID:', this.currentUserId);
-          console.log('Sample messages with sender IDs:', res.data.messages.slice(0, 3).map(msg => ({
-            id: msg.id,
-            sender_id: msg.sender_id,
-            sender_type: typeof msg.sender_id,
-            current_id: this.currentUserId,
-            current_type: typeof this.currentUserId,
-            is_sent: msg.sender_id == this.currentUserId
-          })));
+
+          console.log('=== MESSAGES LOADED ===');
+          console.log('Total messages:', res.data.messages.length);
+          console.log('First 3 messages analysis:');
+          res.data.messages.slice(0, 3).forEach((msg, idx) => {
+            console.log(`Message ${idx + 1}:`, {
+              id: msg.id,
+              text: msg.msg.substring(0, 30) + '...',
+              sender_id: msg.sender_id,
+              sender_id_type: typeof msg.sender_id,
+              currentUserId: this.currentUserId,
+              currentUserId_type: typeof this.currentUserId,
+              sender_equals_current: msg.sender_id === this.currentUserId,
+              sender_equals_current_parseInt: parseInt(msg.sender_id) === parseInt(this.currentUserId),
+              SHOULD_BE_ON_RIGHT: parseInt(msg.sender_id) === parseInt(this.currentUserId)
+            });
+          });
+          console.log('===================');
+
           this.$nextTick(() => {
             this.scrollToBottom();
           });
@@ -290,16 +352,39 @@ export default {
 
       this.sending = true;
 
-      axios.post('/send-message', { receiver_id: this.selectedUser, msg: this.msg })
+      // Create optimistic message for instant feedback
+      const optimisticMessage = {
+        sender_id: this.currentUserId,
+        receiver_id: this.selectedUser,
+        msg: this.msg,
+        created_at: new Date().toISOString(),
+        user: {
+          id: this.currentUserId,
+          name: this.currentUserName,
+          photo: this.currentUserPhoto,
+          role: 'sending...'
+        },
+        isOptimistic: true
+      };
+
+      const messageText = this.msg;
+      this.msg = "";
+
+      axios.post('/send-message', { receiver_id: this.selectedUser, msg: messageText })
         .then((res) => {
-          // Add message to current conversation immediately
+          // Remove optimistic message if it exists
+          this.allmessages.messages = this.allmessages.messages.filter(m => !m.isOptimistic);
+
+          // Add actual message from server
           this.allmessages.messages.push(res.data.data);
-          this.msg = "";
           this.sending = false;
           this.$nextTick(() => {
             this.scrollToBottom();
           });
         }).catch((err) => {
+          // Remove optimistic message on error
+          this.allmessages.messages = this.allmessages.messages.filter(m => !m.isOptimistic);
+          this.msg = messageText; // Restore message
           this.sending = false;
           if (err.response && err.response.status === 400) {
             alert(err.response.data.message || 'Cannot send message to yourself');
@@ -311,16 +396,14 @@ export default {
     },
 
     handleTyping() {
-      // Implement typing indicator logic
-      if (!this.isTyping) {
-        this.isTyping = true;
-        // In a real implementation, you'd broadcast typing status
-      }
+      // This method is called when the current user types
+      // In a real implementation with broadcasting, you would:
+      // 1. Broadcast typing status to the other user
+      // 2. The other user would receive the event and show the typing indicator
+      // For now, we don't show typing indicator for yourself
 
-      clearTimeout(this.typingTimer);
-      this.typingTimer = setTimeout(() => {
-        this.isTyping = false;
-      }, 1000);
+      // TODO: Implement with Laravel Echo broadcasting
+      // broadcast typing event to receiver_id: this.selectedUser
     },
 
     scrollToBottom() {
@@ -331,7 +414,26 @@ export default {
 
     isSentByCurrentUser(senderId) {
       // Ensure both values are compared as the same type (numbers)
-      return parseInt(senderId) === parseInt(this.currentUserId);
+      // Handle null/undefined cases
+      if (!senderId || !this.currentUserId) {
+        console.warn('Missing senderId or currentUserId:', { senderId, currentUserId: this.currentUserId });
+        return false;
+      }
+
+      const senderIdNum = parseInt(senderId);
+      const currentUserIdNum = parseInt(this.currentUserId);
+      const result = senderIdNum === currentUserIdNum;
+
+      // Debug logging (can be removed in production)
+      console.log('isSentByCurrentUser check:', {
+        senderId: senderId,
+        currentUserId: this.currentUserId,
+        senderIdNum: senderIdNum,
+        currentUserIdNum: currentUserIdNum,
+        result: result ? '✓ SENT BY ME (RIGHT)' : '✗ RECEIVED (LEFT)'
+      });
+
+      return result;
     },
 
     formatDate(dateString) {
@@ -394,15 +496,37 @@ export default {
   cursor: pointer;
   transition: all 0.3s ease;
   border-left: 3px solid transparent;
+  position: relative;
+}
+
+.user-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: rgba(255, 255, 255, 0.3);
+  transition: width 0.3s ease;
 }
 
 .user-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(2px);
+}
+
+.user-item:hover::before {
+  width: 3px;
 }
 
 .user-item.active {
   background: rgba(255, 255, 255, 0.2);
   border-left-color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.user-item.active::before {
+  width: 3px;
 }
 
 .user-avatar {
@@ -537,6 +661,8 @@ export default {
   padding: 20px;
   background: linear-gradient(to bottom, #f8fafc, #ffffff);
   scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
 }
 
 .message-wrapper {
@@ -544,26 +670,34 @@ export default {
   margin-bottom: 16px;
   align-items: flex-end;
   gap: 8px;
-  max-width: 75%;
-  clear: both;
+  max-width: 70%;
+  animation: slideIn 0.3s ease-out;
 }
 
-/* Sent messages (current user) - Right side */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Sent messages (current user) - Right side with filled background */
 .message-wrapper.sent {
-  margin-left: auto;
-  margin-right: 0;
+  align-self: flex-end;
   flex-direction: row-reverse;
-  float: right;
-  clear: both;
+  margin-left: auto;
 }
 
 /* Received messages (other user) - Left side */
 .message-wrapper.received {
-  margin-right: auto;
-  margin-left: 0;
+  align-self: flex-start;
   flex-direction: row;
-  float: left;
-  clear: both;
+  margin-right: auto;
 }
 
 .message-bubble {
@@ -571,9 +705,10 @@ export default {
   min-width: 100px;
   max-width: 100%;
   word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-/* Sent message styling (current user) */
+/* Sent message styling (current user) - FILLED BACKGROUND on RIGHT */
 .message-wrapper.sent .message-bubble {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -596,7 +731,7 @@ export default {
   border-right: none;
 }
 
-/* Received message styling (other user) */
+/* Received message styling (other user) - LEFT SIDE */
 .message-wrapper.received .message-bubble {
   background: #e2e8f0;
   color: #334155;
@@ -622,17 +757,36 @@ export default {
 .message-content {
   padding: 12px 16px 8px 16px;
   font-size: 14px;
-  line-height: 1.4;
+  line-height: 1.5;
   word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.message-wrapper.sent .message-content {
+  color: white;
+}
+
+.message-wrapper.received .message-content {
+  color: #334155;
 }
 
 .message-time {
   padding: 0 16px 8px;
   font-size: 11px;
-  opacity: 0.7;
+  opacity: 0.8;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.message-wrapper.sent .message-time {
+  color: rgba(255, 255, 255, 0.9);
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.message-wrapper.received .message-time {
+  color: #64748b;
 }
 
 .seen-indicator {
@@ -648,13 +802,6 @@ export default {
   flex-shrink: 0;
   align-self: flex-end;
   margin-bottom: 2px;
-}
-
-/* Clear floats after messages */
-.messages-area::after {
-  content: "";
-  display: table;
-  clear: both;
 }
 
 
@@ -711,19 +858,29 @@ export default {
 }
 
 .send-btn:hover:not(:disabled) {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}
+
+.send-btn:active:not(:disabled) {
+  transform: scale(0.95);
 }
 
 .send-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+  background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
 }
 
 .send-btn i {
   color: white;
   font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.send-btn:hover:not(:disabled) i {
+  transform: translateX(2px);
 }
 
 /* Empty State */

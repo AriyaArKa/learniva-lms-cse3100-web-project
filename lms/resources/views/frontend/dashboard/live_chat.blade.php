@@ -13,7 +13,13 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-0">
                     <div id="app">
-                        <chat-message></chat-message>
+                        <chat-message
+                            :initial-current-user="{{ json_encode([
+                                'id' => Auth::user()->id,
+                                'name' => Auth::user()->name,
+                                'photo' => Auth::user()->photo,
+                                'role' => Auth::user()->role,
+                            ]) }}"></chat-message>
                     </div>
                 </div>
             </div>
