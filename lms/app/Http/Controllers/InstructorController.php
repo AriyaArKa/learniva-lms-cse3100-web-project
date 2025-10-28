@@ -5,12 +5,119 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Course;
+use App\Models\Order;
+use App\Models\Payment;
 
 
 class InstructorController extends Controller
 {
-    public function InstructorDashboard(){
-        return view('instructor.index');
+    public function InstructorDashboard()
+    {
+        $id = Auth::user()->id;
+
+        // Get instructor's courses
+        $instructorCourses = Course::where('instructor_id', $id)->pluck('id');
+
+        // Get statistics
+        $totalCourses = Course::where('instructor_id', $id)->count();
+
+        // Get payment IDs with 'complete' status
+        $completedPaymentIds = Payment::where('status', 'complete')->pluck('id');
+
+        // Get total students enrolled in instructor's courses (using completed payments)
+        $totalStudents = Order::whereIn('course_id', $instructorCourses)
+            ->whereIn('payment_id', $completedPaymentIds)
+            ->distinct('user_id')
+            ->count('user_id');
+
+        // Get total revenue from instructor's courses
+        $totalRevenue = Order::whereIn('course_id', $instructorCourses)
+            ->whereIn('payment_id', $completedPaymentIds)
+            ->sum('price');
+
+        // Get total orders (with completed payments)
+        $totalOrders = Order::whereIn('course_id', $instructorCourses)
+            ->whereIn('payment_id', $completedPaymentIds)
+            ->count();
+
+        // Get pending payments
+        $pendingPaymentIds = Payment::where('status', 'pending')->pluck('id');
+        $pendingOrders = Order::whereIn('course_id', $instructorCourses)
+            ->whereIn('payment_id', $pendingPaymentIds)
+            ->count();
+
+        // Calculate bounce rate (pending orders percentage)
+        $bounceRate = ($totalOrders + $pendingOrders) > 0
+            ? round(($pendingOrders / ($totalOrders + $pendingOrders)) * 100, 1)
+            : 0;
+
+        // Get recent orders with course and payment info
+        $recentOrders = Order::whereIn('course_id', $instructorCourses)
+            ->with(['course', 'payment', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        // Get monthly revenue for current year
+        $currentYear = date('Y');
+        $monthlyRevenue = Payment::whereIn('id', function ($query) use ($instructorCourses) {
+            $query->select('payment_id')
+                ->from('orders')
+                ->whereIn('course_id', $instructorCourses);
+        })
+            ->where('status', 'complete')
+            ->where('order_year', $currentYear)
+            ->selectRaw('order_month, SUM(total_amount) as total')
+            ->groupBy('order_month')
+            ->pluck('total', 'order_month')
+            ->toArray();
+
+        // Create array for all 12 months
+        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        $monthlyRevenueData = [];
+        $monthlyOrdersData = [];
+
+        foreach ($months as $month) {
+            $monthlyRevenueData[] = $monthlyRevenue[$month] ?? 0;
+
+            // Get orders count per month
+            $ordersCount = Order::whereIn('course_id', $instructorCourses)
+                ->whereIn('payment_id', function ($query) use ($month, $currentYear) {
+                    $query->select('id')
+                        ->from('payments')
+                        ->where('status', 'complete')
+                        ->where('order_month', $month)
+                        ->where('order_year', $currentYear);
+                })
+                ->count();
+            $monthlyOrdersData[] = $ordersCount;
+        }
+
+        // Calculate this month's revenue
+        $currentMonth = date('F');
+        $thisMonthRevenue = $monthlyRevenue[$currentMonth] ?? 0;
+
+        // Calculate last month's revenue for comparison
+        $lastMonth = date('F', strtotime('-1 month'));
+        $lastMonthRevenue = $monthlyRevenue[$lastMonth] ?? 0;
+
+        // Calculate percentage change
+        $revenueChange = $lastMonthRevenue > 0
+            ? round((($thisMonthRevenue - $lastMonthRevenue) / $lastMonthRevenue) * 100, 1)
+            : 0;
+
+        return view('instructor.index', compact(
+            'totalCourses',
+            'totalStudents',
+            'totalRevenue',
+            'totalOrders',
+            'bounceRate',
+            'recentOrders',
+            'monthlyRevenueData',
+            'monthlyOrdersData',
+            'revenueChange'
+        ));
     }
 
     public function InstructorLogout(Request $request)

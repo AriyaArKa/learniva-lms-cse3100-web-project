@@ -8,7 +8,7 @@
     <!--favicon-->
     <link rel="icon" href="{{ asset('backend/assets/images/favicon-32x32.png') }}" type="image/png" />
 
-	@vite(['resources/js/app.js'])
+    @vite(['resources/js/app.js'])
 
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -277,10 +277,10 @@
     <script src="{{ asset('backend/assets/js/index.js') }}"></script>
 
 
-	<script>
-		new PerfectScrollbar('.chat-list');
-		new PerfectScrollbar('.chat-content');
-	</script>
+    <script>
+        new PerfectScrollbar('.chat-list');
+        new PerfectScrollbar('.chat-content');
+    </script>
 
 
     <!--app JS-->
@@ -409,6 +409,7 @@
         });
     </script>
 
+    @stack('scripts')
 
 </body>
 
