@@ -106,7 +106,10 @@
       <div class="message-input-area">
         <div class="input-group">
           <input type="text" v-model="msg" @keyup.enter="sendMsg" @input="handleTyping" class="message-input"
-            placeholder="Type your message..." :disabled="sending" />
+            placeholder="Type your message... (Use @gpt to ask AI)" :disabled="sending" />
+          <span v-if="isGptMessage" class="ai-indicator" title="AI will respond to this message">
+            <i class="fas fa-robot"></i>
+          </span>
           <button @click="sendMsg" :disabled="!msg.trim() || sending" class="send-btn"
             :title="sending ? 'Sending...' : 'Send message'">
             <i v-if="sending" class="fas fa-spinner fa-spin"></i>
@@ -158,6 +161,9 @@ export default {
       return this.currentUserPhoto && this.currentUserPhoto !== '/upload/no_image.jpg'
         ? this.currentUserPhoto
         : null;
+    },
+    isGptMessage() {
+      return this.msg.trim().toLowerCase().startsWith('@gpt');
     }
   },
 
@@ -368,6 +374,7 @@ export default {
       };
 
       const messageText = this.msg;
+      const isGptMessage = messageText.trim().toLowerCase().startsWith('@gpt');
       this.msg = "";
 
       axios.post('/send-message', { receiver_id: this.selectedUser, msg: messageText })
@@ -377,6 +384,12 @@ export default {
 
           // Add actual message from server
           this.allmessages.messages.push(res.data.data);
+
+          // If there's an AI response, add it too
+          if (res.data.ai_response) {
+            this.allmessages.messages.push(res.data.ai_response);
+          }
+
           this.sending = false;
           this.$nextTick(() => {
             this.scrollToBottom();
@@ -826,6 +839,29 @@ export default {
 .input-group:focus-within {
   box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
   transform: translateY(-1px);
+}
+
+.ai-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #667eea;
+  font-size: 20px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
 }
 
 .message-input {

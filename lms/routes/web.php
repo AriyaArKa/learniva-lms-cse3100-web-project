@@ -23,6 +23,7 @@ use App\Http\Controllers\Backend\ActiveUserController;
 use App\Http\Controllers\Backend\BlogController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\ChatController;
+use App\Services\GeminiService;
 
 
 
@@ -432,6 +433,17 @@ Route::middleware(['auth'])->group(function () {
 
 ///end route accessible for all
 
+// Test route for Gemini AI
+Route::get('/test-gemini', function (GeminiService $gemini) {
+    $prompt = "Say hello in a friendly way and introduce yourself as Gemini AI assistant";
+    $response = $gemini->generateResponse($prompt);
+
+    return response()->json([
+        'success' => true,
+        'prompt' => $prompt,
+        'response' => $response
+    ]);
+});
 
 ////user group middleware
 Route::middleware(['auth', 'role:user'])->group(function () {

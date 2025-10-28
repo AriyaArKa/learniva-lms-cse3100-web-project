@@ -7,11 +7,19 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\ChatMessage;
 use App\Events\MessageSent;
+use App\Services\GeminiService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
+    protected $geminiService;
+
+    public function __construct(GeminiService $geminiService)
+    {
+        $this->geminiService = $geminiService;
+    }
+
     public function SendMessage(Request $request)
     {
 
@@ -28,6 +36,7 @@ class ChatController extends Controller
             ], 400);
         }
 
+        // Save the user's message
         $message = ChatMessage::create([
             'sender_id' => Auth::user()->id,
             'receiver_id' => $request->receiver_id,
@@ -41,6 +50,37 @@ class ChatController extends Controller
         // Load sender relationship for consistent data structure
         $message->load('sender');
         $message->user = $message->sender;
+
+        // Check if this is a @gpt message
+        if ($this->geminiService->isAiMessage($request->msg)) {
+            // Extract the prompt (remove @gpt prefix)
+            $prompt = $this->geminiService->extractPrompt($request->msg);
+
+            // Generate AI response
+            $aiResponse = $this->geminiService->generateResponse($prompt);
+
+            // Save the AI response as a message from the receiver
+            $aiMessage = ChatMessage::create([
+                'sender_id' => $request->receiver_id,
+                'receiver_id' => Auth::user()->id,
+                'msg' => "🤖 Gemini AI: " . $aiResponse,
+                'created_at' => Carbon::now(),
+            ]);
+
+            // Broadcast the AI response
+            broadcast(new MessageSent($aiMessage))->toOthers();
+
+            // Load sender relationship for the AI message
+            $aiMessage->load('sender');
+            $aiMessage->user = $aiMessage->sender;
+
+            // Return both messages
+            return response()->json([
+                'message' => 'Message Sent Successfully with AI Response',
+                'data' => $message,
+                'ai_response' => $aiMessage
+            ]);
+        }
 
         return response()->json([
             'message' => 'Message Send Successfully',

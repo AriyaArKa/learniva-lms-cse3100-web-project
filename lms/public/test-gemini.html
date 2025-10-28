@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Test Gemini AI Chat Feature</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                max-width: 800px;
+                margin: 50px auto;
+                padding: 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+            .container {
+                background: white;
+                padding: 30px;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            }
+            h1 {
+                color: #667eea;
+                text-align: center;
+            }
+            .test-section {
+                margin: 30px 0;
+                padding: 20px;
+                background: #f8fafc;
+                border-radius: 8px;
+                border-left: 4px solid #667eea;
+            }
+            .test-section h2 {
+                color: #333;
+                margin-top: 0;
+            }
+            button {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 16px;
+                transition: transform 0.3s;
+            }
+            button:hover {
+                transform: scale(1.05);
+            }
+            button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+            .response {
+                margin-top: 15px;
+                padding: 15px;
+                background: white;
+                border-radius: 6px;
+                border: 1px solid #e2e8f0;
+            }
+            .loading {
+                color: #667eea;
+                font-style: italic;
+            }
+            .success {
+                color: #10b981;
+                font-weight: bold;
+            }
+            .error {
+                color: #ef4444;
+                font-weight: bold;
+            }
+            .instructions {
+                background: #fff3cd;
+                border: 1px solid #ffc107;
+                padding: 15px;
+                border-radius: 6px;
+                margin: 20px 0;
+            }
+            .instructions h3 {
+                margin-top: 0;
+                color: #856404;
+            }
+            .instructions ol {
+                margin-bottom: 0;
+            }
+            pre {
+                background: #1e293b;
+                color: #e2e8f0;
+                padding: 15px;
+                border-radius: 6px;
+                overflow-x: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🤖 Gemini AI Chat Integration Test</h1>
+
+            <div class="instructions">
+                <h3>📋 How to Test the Chat Feature:</h3>
+                <ol>
+                    <li>Login to your LMS application (as any user)</li>
+                    <li>Navigate to the Chat/Live Chat section</li>
+                    <li>Select a user to chat with</li>
+                    <li>
+                        Type a message starting with
+                        <strong>@gpt</strong> (e.g., "@gpt Hello, how are you?")
+                    </li>
+                    <li>Press Enter or click Send</li>
+                    <li>
+                        You should see both your message and the AI's response
+                        appear in the chat
+                    </li>
+                    <li>
+                        The AI response will be prefixed with "🤖 Gemini AI:"
+                    </li>
+                </ol>
+            </div>
+
+            <div class="test-section">
+                <h2>🧪 Test 1: Verify Gemini API Connection</h2>
+                <p>
+                    Click the button below to test if the Gemini API is properly
+                    configured:
+                </p>
+                <button onclick="testGeminiConnection()">
+                    Test Gemini API
+                </button>
+                <div id="gemini-result"></div>
+            </div>
+
+            <div class="test-section">
+                <h2>📝 Example Chat Messages to Try:</h2>
+                <pre>
+@gpt What is Laravel?
+
+@gpt Explain PHP in simple terms
+
+@gpt Write a haiku about programming
+
+@gpt What are best practices for web development?</pre
+                >
+            </div>
+
+            <div class="test-section">
+                <h2>✅ Expected Behavior:</h2>
+                <ul>
+                    <li>✓ Regular messages work normally (without @gpt)</li>
+                    <li>✓ Messages starting with @gpt trigger AI response</li>
+                    <li>✓ Robot icon appears when typing @gpt</li>
+                    <li>✓ Both users see the AI response</li>
+                    <li>✓ AI responses are prefixed with "🤖 Gemini AI:"</li>
+                    <li>✓ Response appears within a few seconds</li>
+                </ul>
+            </div>
+
+            <div class="test-section">
+                <h2>🔍 Quick Checks:</h2>
+                <ul>
+                    <li>
+                        <strong>Server Running:</strong> Check if
+                        <code>php artisan serve</code> is active
+                    </li>
+                    <li><strong>API Key:</strong> Configured in .env file</li>
+                    <li>
+                        <strong>Build Assets:</strong> Run
+                        <code>npm run build</code> if you made changes
+                    </li>
+                    <li>
+                        <strong>Cache Cleared:</strong> Run
+                        <code>php artisan config:clear</code>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <script>
+            async function testGeminiConnection() {
+                const resultDiv = document.getElementById("gemini-result");
+                const button = event.target;
+
+                button.disabled = true;
+                resultDiv.innerHTML =
+                    '<div class="response loading">⏳ Testing Gemini API connection...</div>';
+
+                try {
+                    const response = await fetch(
+                        "http://localhost:8000/test-gemini"
+                    );
+                    const data = await response.json();
+
+                    if (data.success) {
+                        resultDiv.innerHTML = `
+                        <div class="response">
+                            <p class="success">✅ Gemini API is working correctly!</p>
+                            <p><strong>Prompt:</strong> ${data.prompt}</p>
+                            <p><strong>AI Response:</strong></p>
+                            <p>${data.response}</p>
+                        </div>
+                    `;
+                    } else {
+                        resultDiv.innerHTML = `
+                        <div class="response error">
+                            ❌ API test failed. Check console for details.
+                        </div>
+                    `;
+                    }
+                } catch (error) {
+                    resultDiv.innerHTML = `
+                    <div class="response error">
+                        ❌ Connection error: ${error.message}
+                        <br>Make sure the Laravel server is running at http://localhost:8000
+                    </div>
+                `;
+                } finally {
+                    button.disabled = false;
+                }
+            }
+        </script>
+    </body>
+</html>
