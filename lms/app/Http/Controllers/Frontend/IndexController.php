@@ -41,13 +41,75 @@ class IndexController extends Controller
 
     public function CategoryCourse($id, $slug)
     {
-
-        $courses = Course::where('category_id', $id)->where('status', '1')->with('user')->get();
         $category = Category::where('id', $id)->first();
-        $categories = Category::latest()->get();
-        return view('frontend.category.category_all', compact('courses', 'category', 'categories'));
 
+        if (!$category) {
+            abort(404, 'Category not found');
+        }
 
+        // Get courses with their relationships
+        $courses = Course::where('category_id', $id)
+            ->where('status', '1')
+            ->with(['user', 'review'])
+            ->get();
+
+        // Calculate average ratings and review counts for each course
+        $courses = $courses->map(function ($course) {
+            $reviews = \App\Models\Review::where('course_id', $course->id)
+                ->where('status', 1)
+                ->get();
+
+            $course->review_count = $reviews->count();
+            $course->average_rating = $reviews->count() > 0 ? round($reviews->avg('rating'), 1) : 0;
+
+            return $course;
+        });
+
+        // Get all categories with course counts
+        $categories = Category::withCount([
+            'courses' => function ($query) {
+                $query->where('status', '1');
+            }
+        ])->latest()->get();
+
+        // Get rating statistics for the category
+        $courseIds = $courses->pluck('id')->toArray();
+        $allReviews = \App\Models\Review::whereIn('course_id', $courseIds)
+            ->where('status', 1)
+            ->get();
+
+        // Calculate rating distribution
+        $ratingStats = [
+            '5' => $allReviews->where('rating', 5)->count(),
+            '4' => $allReviews->where('rating', '>=', 4)->where('rating', '<', 5)->count(),
+            '3' => $allReviews->where('rating', '>=', 3)->where('rating', '<', 4)->count(),
+            '2' => $allReviews->where('rating', '>=', 2)->where('rating', '<', 3)->count(),
+            '1' => $allReviews->where('rating', '>=', 1)->where('rating', '<', 2)->count(),
+        ];
+
+        // Get course level distribution
+        $levelStats = [
+            'all' => $courses->count(),
+            'beginner' => $courses->where('label', 'Beginner')->count(),
+            'intermediate' => $courses->where('label', 'Intermediate')->count(),
+            'expert' => $courses->where('label', 'Advanced')->count(),
+        ];
+
+        // Get price distribution
+        $priceStats = [
+            'paid' => $courses->where('selling_price', '>', 0)->count(),
+            'free' => $courses->where('selling_price', 0)->count(),
+            'all' => $courses->count(),
+        ];
+
+        return view('frontend.category.category_all', compact(
+            'courses',
+            'category',
+            'categories',
+            'ratingStats',
+            'levelStats',
+            'priceStats'
+        ));
     }// End Method
     public function SubCategoryCourse($id, $slug)
     {

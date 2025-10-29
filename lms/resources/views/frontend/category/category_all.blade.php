@@ -15,7 +15,7 @@
             </div>
             <ul
                 class="generic-list-item generic-list-item-white generic-list-item-arrow d-flex flex-wrap align-items-center">
-                <li><a href="index.html">Home</a></li>
+                <li><a href="{{ url('/') }}">Home</a></li>
                 <li>{{ $category->category_name }}</li>
             </ul>
         </div><!-- end breadcrumb-content -->
@@ -32,27 +32,12 @@
     <div class="container">
         <div class="filter-bar mb-4">
             <div class="filter-bar-inner d-flex flex-wrap align-items-center justify-content-between">
-                <p class="fs-14">We found <span class="text-black">{{ count($courses) }}</span> courses available for
+                <p class="fs-14">We found <span class="text-black" id="course-count">{{ count($courses) }}</span>
+                    courses available for
                     you</p>
-                <div class="d-flex flex-wrap align-items-center">
-                    <ul class="filter-nav mr-3">
-                        <li><a href="course-grid.html" data-toggle="tooltip" data-placement="top" title="Grid View"
-                                class="active"><span class="la la-th-large"></span></a></li>
-                        <li><a href="course-list.html" data-toggle="tooltip" data-placement="top"
-                                title="List View"><span class="la la-list"></span></a></li>
-                    </ul>
-                    <div class="select-container select--container">
-                        <select class="select-container-select">
-                            <option value="all-category">All Category</option>
-                            <option value="newest">Newest courses</option>
-                            <option value="oldest">Oldest courses</option>
-                            <option value="high-rated">Highest rated</option>
-                            <option value="popular-courses">Popular courses</option>
-                            <option value="high-to-low">Price: high to low</option>
-                            <option value="low-to-high">Price: low to high</option>
-                        </select>
-                    </div>
-                </div>
+                <button class="btn btn-sm btn-outline-secondary" id="clear-filters" style="display: none;">
+                    <i class="la la-times"></i> Clear Filters
+                </button>
             </div><!-- end filter-bar-inner -->
         </div><!-- end filter-bar -->
         <div class="row">
@@ -78,11 +63,13 @@
                             <div class="divider"><span></span></div>
                             <ul class="generic-list-item">
                                 @foreach ($categories as $cat)
-                                    <li><a
-                                            href="{{ url('category/' . $cat->id . '/' . $cat->category_slug) }}">{{ $cat->category_name }}</a>
+                                    <li>
+                                        <a href="{{ url('category/' . $cat->id . '/' . $cat->category_slug) }}">
+                                            {{ $cat->category_name }}
+                                            <span class="text-gray">({{ $cat->courses_count ?? 0 }})</span>
+                                        </a>
                                     </li>
                                 @endforeach
-
                             </ul>
                         </div>
                     </div><!-- end card -->
@@ -92,8 +79,8 @@
                             <h3 class="card-title fs-18 pb-2">Ratings</h3>
                             <div class="divider"><span></span></div>
                             <div class="custom-control custom-radio mb-1 fs-15">
-                                <input type="radio" class="custom-control-input" id="fiveStarRating"
-                                    name="radio-stacked" required>
+                                <input type="radio" class="custom-control-input rating-filter" id="fiveStarRating"
+                                    name="radio-stacked" value="5">
                                 <label class="custom-control-label custom--control-label" for="fiveStarRating">
                                     <span class="rating-wrap d-flex align-items-center">
                                         <span class="review-stars">
@@ -104,13 +91,13 @@
                                             <span class="la la-star"></span>
                                         </span>
                                         <span class="rating-total pl-1"><span
-                                                class="mr-1 text-black">5.0</span>(20,230)</span>
+                                                class="mr-1 text-black">5.0</span>({{ $ratingStats['5'] ?? 0 }})</span>
                                     </span>
                                 </label>
                             </div>
                             <div class="custom-control custom-radio mb-1 fs-15">
-                                <input type="radio" class="custom-control-input" id="fourStarRating"
-                                    name="radio-stacked" required>
+                                <input type="radio" class="custom-control-input rating-filter" id="fourStarRating"
+                                    name="radio-stacked" value="4">
                                 <label class="custom-control-label custom--control-label" for="fourStarRating">
                                     <span class="rating-wrap d-flex align-items-center">
                                         <span class="review-stars">
@@ -118,214 +105,117 @@
                                             <span class="la la-star"></span>
                                             <span class="la la-star"></span>
                                             <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
+                                            <span class="la la-star-o"></span>
                                         </span>
-                                        <span class="rating-total pl-1"><span class="mr-1 text-black">4.5 &
-                                                up</span>(10,230)</span>
+                                        <span class="rating-total pl-1"><span class="mr-1 text-black">4.0 &
+                                                up</span>({{ $ratingStats['4'] ?? 0 }})</span>
                                     </span>
                                 </label>
                             </div>
                             <div class="custom-control custom-radio mb-1 fs-15">
-                                <input type="radio" class="custom-control-input" id="threeStarRating"
-                                    name="radio-stacked" required>
+                                <input type="radio" class="custom-control-input rating-filter" id="threeStarRating"
+                                    name="radio-stacked" value="3">
                                 <label class="custom-control-label custom--control-label" for="threeStarRating">
                                     <span class="rating-wrap d-flex align-items-center">
                                         <span class="review-stars">
                                             <span class="la la-star"></span>
                                             <span class="la la-star"></span>
                                             <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
+                                            <span class="la la-star-o"></span>
+                                            <span class="la la-star-o"></span>
                                         </span>
                                         <span class="rating-total pl-1"><span class="mr-1 text-black">3.0 &
-                                                up</span>(7,230)</span>
+                                                up</span>({{ $ratingStats['3'] ?? 0 }})</span>
                                     </span>
                                 </label>
                             </div>
                             <div class="custom-control custom-radio mb-1 fs-15">
-                                <input type="radio" class="custom-control-input" id="twoStarRating"
-                                    name="radio-stacked" required>
+                                <input type="radio" class="custom-control-input rating-filter" id="twoStarRating"
+                                    name="radio-stacked" value="2">
                                 <label class="custom-control-label custom--control-label" for="twoStarRating">
                                     <span class="rating-wrap d-flex align-items-center">
                                         <span class="review-stars">
                                             <span class="la la-star"></span>
                                             <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
+                                            <span class="la la-star-o"></span>
+                                            <span class="la la-star-o"></span>
+                                            <span class="la la-star-o"></span>
                                         </span>
                                         <span class="rating-total pl-1"><span class="mr-1 text-black">2.0 &
-                                                up</span>(5,230)</span>
+                                                up</span>({{ $ratingStats['2'] ?? 0 }})</span>
                                     </span>
                                 </label>
                             </div>
                             <div class="custom-control custom-radio mb-1 fs-15">
-                                <input type="radio" class="custom-control-input" id="oneStarRating"
-                                    name="radio-stacked" required>
+                                <input type="radio" class="custom-control-input rating-filter" id="oneStarRating"
+                                    name="radio-stacked" value="1">
                                 <label class="custom-control-label custom--control-label" for="oneStarRating">
                                     <span class="rating-wrap d-flex align-items-center">
                                         <span class="review-stars">
                                             <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
+                                            <span class="la la-star-o"></span>
+                                            <span class="la la-star-o"></span>
+                                            <span class="la la-star-o"></span>
+                                            <span class="la la-star-o"></span>
                                         </span>
                                         <span class="rating-total pl-1"><span class="mr-1 text-black">1.0 &
-                                                up</span>(3,230)</span>
+                                                up</span>({{ $ratingStats['1'] ?? 0 }})</span>
                                     </span>
                                 </label>
                             </div>
                         </div>
                     </div><!-- end card -->
-                    <div class="card card-item">
-                        <div class="card-body">
-                            <h3 class="card-title fs-18 pb-2">Categories</h3>
-                            <div class="divider"><span></span></div>
-                            <div class="custom-control custom-checkbox mb-1 fs-15">
-                                <input type="checkbox" class="custom-control-input" id="catCheckbox" required>
-                                <label class="custom-control-label custom--control-label text-black"
-                                    for="catCheckbox">
-                                    Business<span class="ml-1 text-gray">(12,300)</span>
-                                </label>
-                            </div><!-- end custom-control -->
-                            <div class="custom-control custom-checkbox mb-1 fs-15">
-                                <input type="checkbox" class="custom-control-input" id="catCheckbox2" required>
-                                <label class="custom-control-label custom--control-label text-black"
-                                    for="catCheckbox2">
-                                    UI & UX<span class="ml-1 text-gray">(12,300)</span>
-                                </label>
-                            </div><!-- end custom-control -->
-                            <div class="custom-control custom-checkbox mb-1 fs-15">
-                                <input type="checkbox" class="custom-control-input" id="catCheckbox3" required>
-                                <label class="custom-control-label custom--control-label text-black"
-                                    for="catCheckbox3">
-                                    Animation<span class="ml-1 text-gray">(12,300)</span>
-                                </label>
-                            </div><!-- end custom-control -->
-                            <div class="custom-control custom-checkbox mb-1 fs-15">
-                                <input type="checkbox" class="custom-control-input" id="catCheckbox4" required>
-                                <label class="custom-control-label custom--control-label text-black"
-                                    for="catCheckbox4">
-                                    Game Design<span class="ml-1 text-gray">(12,300)</span>
-                                </label>
-                            </div><!-- end custom-control -->
-                            <div class="collapse" id="collapseMore">
-                                <div class="custom-control custom-checkbox mb-1 fs-15">
-                                    <input type="checkbox" class="custom-control-input" id="catCheckbox5" required>
-                                    <label class="custom-control-label custom--control-label text-black"
-                                        for="catCheckbox5">
-                                        Graphic Design<span class="ml-1 text-gray">(12,300)</span>
-                                    </label>
-                                </div><!-- end custom-control -->
-                                <div class="custom-control custom-checkbox mb-1 fs-15">
-                                    <input type="checkbox" class="custom-control-input" id="catCheckbox6" required>
-                                    <label class="custom-control-label custom--control-label text-black"
-                                        for="catCheckbox6">
-                                        Typography<span class="ml-1 text-gray">(12,300)</span>
-                                    </label>
-                                </div><!-- end custom-control -->
-                                <div class="custom-control custom-checkbox mb-1 fs-15">
-                                    <input type="checkbox" class="custom-control-input" id="catCheckbox7" required>
-                                    <label class="custom-control-label custom--control-label text-black"
-                                        for="catCheckbox7">
-                                        Web Development<span class="ml-1 text-gray">(12,300)</span>
-                                    </label>
-                                </div><!-- end custom-control -->
-                                <div class="custom-control custom-checkbox mb-1 fs-15">
-                                    <input type="checkbox" class="custom-control-input" id="catCheckbox8" required>
-                                    <label class="custom-control-label custom--control-label text-black"
-                                        for="catCheckbox8">
-                                        Photography<span class="ml-1 text-gray">(12,300)</span>
-                                    </label>
-                                </div><!-- end custom-control -->
-                                <div class="custom-control custom-checkbox mb-1 fs-15">
-                                    <input type="checkbox" class="custom-control-input" id="catCheckbox9" required>
-                                    <label class="custom-control-label custom--control-label text-black"
-                                        for="catCheckbox9">
-                                        Finance<span class="ml-1 text-gray">(12,300)</span>
-                                    </label>
-                                </div><!-- end custom-control -->
-                            </div><!-- end collapse -->
-                            <a class="collapse-btn collapse--btn fs-15" data-toggle="collapse" href="#collapseMore"
-                                role="button" aria-expanded="false" aria-controls="collapseMore">
-                                <span class="collapse-btn-hide">Show more<i
-                                        class="la la-angle-down ml-1 fs-14"></i></span>
-                                <span class="collapse-btn-show">Show less<i
-                                        class="la la-angle-up ml-1 fs-14"></i></span>
-                            </a>
-                        </div>
-                    </div><!-- end card -->
+
 
                     <div class="card card-item">
                         <div class="card-body">
                             <h3 class="card-title fs-18 pb-2">Level</h3>
                             <div class="divider"><span></span></div>
                             <div class="custom-control custom-checkbox mb-1 fs-15">
-                                <input type="checkbox" class="custom-control-input" id="levelCheckbox" required>
+                                <input type="checkbox" class="custom-control-input level-filter" id="levelCheckbox"
+                                    value="all">
                                 <label class="custom-control-label custom--control-label text-black"
                                     for="levelCheckbox">
-                                    All Levels<span class="ml-1 text-gray">(20,300)</span>
+                                    All Levels<span class="ml-1 text-gray">({{ $levelStats['all'] ?? 0 }})</span>
                                 </label>
                             </div><!-- end custom-control -->
                             <div class="custom-control custom-checkbox mb-1 fs-15">
-                                <input type="checkbox" class="custom-control-input" id="levelCheckbox2" required>
+                                <input type="checkbox" class="custom-control-input level-filter" id="levelCheckbox2"
+                                    value="Beginner">
                                 <label class="custom-control-label custom--control-label text-black"
                                     for="levelCheckbox2">
-                                    Beginner<span class="ml-1 text-gray">(5,300)</span>
+                                    Beginner<span class="ml-1 text-gray">({{ $levelStats['beginner'] ?? 0 }})</span>
                                 </label>
                             </div><!-- end custom-control -->
                             <div class="custom-control custom-checkbox mb-1 fs-15">
-                                <input type="checkbox" class="custom-control-input" id="levelCheckbox3" required>
+                                <input type="checkbox" class="custom-control-input level-filter" id="levelCheckbox3"
+                                    value="Intermediate">
                                 <label class="custom-control-label custom--control-label text-black"
                                     for="levelCheckbox3">
-                                    Intermediate<span class="ml-1 text-gray">(3,300)</span>
+                                    Intermediate<span
+                                        class="ml-1 text-gray">({{ $levelStats['intermediate'] ?? 0 }})</span>
                                 </label>
                             </div><!-- end custom-control -->
                             <div class="custom-control custom-checkbox mb-1 fs-15">
-                                <input type="checkbox" class="custom-control-input" id="levelCheckbox4" required>
+                                <input type="checkbox" class="custom-control-input level-filter" id="levelCheckbox4"
+                                    value="Advanced">
                                 <label class="custom-control-label custom--control-label text-black"
                                     for="levelCheckbox4">
-                                    Expert<span class="ml-1 text-gray">(1,300)</span>
+                                    Expert<span class="ml-1 text-gray">({{ $levelStats['expert'] ?? 0 }})</span>
                                 </label>
                             </div><!-- end custom-control -->
                         </div>
                     </div><!-- end card -->
 
-                    <div class="card card-item">
-                        <div class="card-body">
-                            <h3 class="card-title fs-18 pb-2">By Cost</h3>
-                            <div class="divider"><span></span></div>
-                            <div class="custom-control custom-checkbox mb-1 fs-15">
-                                <input type="checkbox" class="custom-control-input" id="priceCheckbox" required>
-                                <label class="custom-control-label custom--control-label text-black"
-                                    for="priceCheckbox">
-                                    Paid<span class="ml-1 text-gray">(19,300)</span>
-                                </label>
-                            </div><!-- end custom-control -->
-                            <div class="custom-control custom-checkbox mb-1 fs-15">
-                                <input type="checkbox" class="custom-control-input" id="priceCheckbox2" required>
-                                <label class="custom-control-label custom--control-label text-black"
-                                    for="priceCheckbox2">
-                                    Free<span class="ml-1 text-gray">(1,300)</span>
-                                </label>
-                            </div><!-- end custom-control -->
-                            <div class="custom-control custom-checkbox mb-1 fs-15">
-                                <input type="checkbox" class="custom-control-input" id="priceCheckbox3" required>
-                                <label class="custom-control-label custom--control-label text-black"
-                                    for="priceCheckbox3">
-                                    All<span class="ml-1 text-gray">(20,300)</span>
-                                </label>
-                            </div><!-- end custom-control -->
-                        </div>
-                    </div><!-- end card -->
+
 
                 </div><!-- end sidebar -->
             </div><!-- end col-lg-4 -->
             <div class="col-lg-8">
-                <div class="row">
+                <div class="row" id="course-list">
                     @forelse ($courses as $course)
-                        <div class="col-lg-4 responsive-column-half">
+                        <div class="col-lg-4 responsive-column-half course-item"
+                            data-rating="{{ $course->average_rating }}" data-level="{{ $course->label }}">
                             <div class="card card-item card-preview">
                                 <div class="card-image">
                                     <a href="{{ url('course/details/' . $course->id . '/' . $course->course_name_slug) }}"
@@ -362,14 +252,26 @@
                                             href="#">{{ $course['user']['name'] ?? 'Instructor' }}</a></p>
                                     <div class="rating-wrap d-flex align-items-center py-2">
                                         <div class="review-stars">
-                                            <span class="rating-number">4.4</span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star"></span>
-                                            <span class="la la-star-o"></span>
+                                            <span class="rating-number">{{ $course->average_rating }}</span>
+                                            @php
+                                                $fullStars = floor($course->average_rating);
+                                                $halfStar = $course->average_rating - $fullStars >= 0.5;
+                                                $emptyStars = 5 - $fullStars - ($halfStar ? 1 : 0);
+                                            @endphp
+
+                                            @for ($i = 0; $i < $fullStars; $i++)
+                                                <span class="la la-star"></span>
+                                            @endfor
+
+                                            @if ($halfStar)
+                                                <span class="la la-star-half-o"></span>
+                                            @endif
+
+                                            @for ($i = 0; $i < $emptyStars; $i++)
+                                                <span class="la la-star-o"></span>
+                                            @endfor
                                         </div>
-                                        <span class="rating-total pl-1">(20,230)</span>
+                                        <span class="rating-total pl-1">({{ $course->review_count }})</span>
                                     </div><!-- end rating-wrap -->
                                     <div class="d-flex justify-content-between align-items-center">
                                         @if ($course->discount_price == null)
@@ -399,28 +301,12 @@
                         </div>
                     @endforelse
                 </div><!-- end row -->
-                <div class="text-center pt-3">
-                    <nav aria-label="Page navigation example" class="pagination-box">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Previous">
-                                    <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
-                                    <span class="sr-only">Previous</span>
-                                </a>
-                            </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Next">
-                                    <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
-                                    <span class="sr-only">Next</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                    <p class="fs-14 pt-2">Showing 1-10 of 56 results</p>
-                </div>
+                @if (count($courses) > 0)
+                    <div class="text-center pt-3">
+                        <p class="fs-14 pt-2">Showing <span id="results-count">{{ count($courses) }}</span> of
+                            {{ count($courses) }} results</p>
+                    </div>
+                @endif
             </div><!-- end col-lg-8 -->
         </div><!-- end row -->
     </div><!-- end container -->
@@ -428,4 +314,165 @@
 <!--======================================
         END COURSE AREA
 ======================================-->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ratingFilters = document.querySelectorAll('.rating-filter');
+        const levelFilters = document.querySelectorAll('.level-filter');
+        const courseItems = document.querySelectorAll('.course-item');
+        const courseCount = document.getElementById('course-count');
+        const resultsCount = document.getElementById('results-count');
+        const clearFiltersBtn = document.getElementById('clear-filters');
+
+        let selectedRating = null;
+        let selectedLevels = [];
+
+        // Rating filter change
+        ratingFilters.forEach(filter => {
+            filter.addEventListener('change', function() {
+                if (this.checked) {
+                    selectedRating = parseFloat(this.value);
+                } else {
+                    selectedRating = null;
+                }
+                applyFilters();
+            });
+        });
+
+        // Level filter change
+        levelFilters.forEach(filter => {
+            filter.addEventListener('change', function() {
+                const value = this.value;
+
+                if (value === 'all') {
+                    if (this.checked) {
+                        // Check all levels
+                        levelFilters.forEach(f => {
+                            if (f.value !== 'all') {
+                                f.checked = true;
+                                if (!selectedLevels.includes(f.value)) {
+                                    selectedLevels.push(f.value);
+                                }
+                            }
+                        });
+                    } else {
+                        // Uncheck all levels
+                        levelFilters.forEach(f => {
+                            f.checked = false;
+                        });
+                        selectedLevels = [];
+                    }
+                } else {
+                    if (this.checked) {
+                        if (!selectedLevels.includes(value)) {
+                            selectedLevels.push(value);
+                        }
+                        // Check if all specific levels are checked
+                        const specificLevels = ['Beginner', 'Intermediate', 'Advanced'];
+                        const allChecked = specificLevels.every(level => selectedLevels
+                            .includes(level));
+                        if (allChecked) {
+                            document.getElementById('levelCheckbox').checked = true;
+                        }
+                    } else {
+                        selectedLevels = selectedLevels.filter(l => l !== value);
+                        document.getElementById('levelCheckbox').checked = false;
+                    }
+                }
+                applyFilters();
+            });
+        });
+
+        // Clear filters button
+        clearFiltersBtn.addEventListener('click', function() {
+            // Clear rating filters
+            ratingFilters.forEach(filter => {
+                filter.checked = false;
+            });
+            selectedRating = null;
+
+            // Clear level filters
+            levelFilters.forEach(filter => {
+                filter.checked = false;
+            });
+            selectedLevels = [];
+
+            applyFilters();
+        });
+
+        function applyFilters() {
+            let visibleCount = 0;
+            let hasActiveFilters = selectedRating !== null || selectedLevels.length > 0;
+
+            courseItems.forEach(item => {
+                const courseRating = parseFloat(item.dataset.rating);
+                const courseLevel = item.dataset.level;
+
+                let showCourse = true;
+
+                // Apply rating filter (rating and above)
+                if (selectedRating !== null) {
+                    if (courseRating < selectedRating) {
+                        showCourse = false;
+                    }
+                }
+
+                // Apply level filter
+                if (selectedLevels.length > 0) {
+                    if (!selectedLevels.includes(courseLevel)) {
+                        showCourse = false;
+                    }
+                }
+
+                // Show/hide course
+                if (showCourse) {
+                    item.style.display = '';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Update count
+            courseCount.textContent = visibleCount;
+            if (resultsCount) {
+                resultsCount.textContent = visibleCount;
+            }
+
+            // Show/hide clear filters button
+            if (hasActiveFilters) {
+                clearFiltersBtn.style.display = 'inline-block';
+            } else {
+                clearFiltersBtn.style.display = 'none';
+            }
+
+            // Show "no results" message if needed
+            updateNoResultsMessage(visibleCount);
+        }
+
+        function updateNoResultsMessage(visibleCount) {
+            const courseList = document.getElementById('course-list');
+            let noResultsDiv = courseList.querySelector('.no-results-message');
+
+            if (visibleCount === 0) {
+                if (!noResultsDiv) {
+                    noResultsDiv = document.createElement('div');
+                    noResultsDiv.className = 'col-12 no-results-message';
+                    noResultsDiv.innerHTML = `
+                        <div class="text-center py-5">
+                            <h4 class="text-muted">No courses found matching your filters</h4>
+                            <p class="text-muted">Try adjusting your filter criteria.</p>
+                        </div>
+                    `;
+                    courseList.appendChild(noResultsDiv);
+                }
+            } else {
+                if (noResultsDiv) {
+                    noResultsDiv.remove();
+                }
+            }
+        }
+    });
+</script>
+
 @endsection

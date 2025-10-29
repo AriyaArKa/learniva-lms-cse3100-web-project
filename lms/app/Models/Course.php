@@ -24,7 +24,8 @@ class Course extends Model
         return $this->belongsTo(User::class, 'instructor_id', 'id');
     }
 
-
-
-
+    public function review()
+    {
+        return $this->hasMany(Review::class, 'course_id', 'id');
+    }
 }
