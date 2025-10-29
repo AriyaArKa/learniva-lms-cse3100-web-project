@@ -45,7 +45,8 @@
                         </div>
                     </div><!-- end logo-box -->
                     <div class="course-dashboard-header-title pl-4">
-                        <a href="course-details.html" class="text-white fs-15">{{ $course->course->course_name }}</a>
+                        <a href="{{ url('/course/details/' . $course->course->id . '/' . $course->course->course_name_slug) }}"
+                            class="text-white fs-15">{{ $course->course->course_name }}</a>
                     </div><!-- end course-dashboard-header-title -->
                     <div class="menu-wrapper ml-auto">
                         <div class="theme-picker d-flex align-items-center mr-3">
@@ -71,27 +72,12 @@
                             </button>
                         </div>
                         <div class="nav-right-button d-flex align-items-center">
-                            <a href="#"
-                                class="btn theme-btn theme-btn-sm theme-btn-transparent lh-26 text-white mr-2"
-                                data-toggle="modal" data-target="#ratingModal"><i class="la la-star mr-1"></i> leave
-                                a rating</a>
+
                             <a href="#"
                                 class="btn theme-btn theme-btn-sm theme-btn-transparent lh-26 text-white mr-2"
                                 data-toggle="modal" data-target="#shareModal"><i class="la la-share mr-1"></i>
                                 share</a>
-                            <div class="generic-action-wrap generic--action-wrap">
-                                <div class="dropdown">
-                                    <a class="action-btn" href="#" role="button" id="dropdownMenuLink"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="la la-ellipsis-v"></i>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-                                        <a class="dropdown-item" href="#">Favorite this course</a>
-                                        <a class="dropdown-item" href="#">Archive this course</a>
-                                        <a class="dropdown-item" href="#">Gift this course</a>
-                                    </div>
-                                </div>
-                            </div>
+
                         </div><!-- end nav-right-button -->
                     </div><!-- end menu-wrapper -->
                 </div><!-- end row -->
@@ -180,13 +166,7 @@ START COURSE-DASHBOARD
                                         Question & Ans
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="announcements-tab" data-toggle="tab"
-                                        href="#announcements" role="tab" aria-controls="announcements"
-                                        aria-selected="false">
-                                        Announcements
-                                    </a>
-                                </li>
+
                             </ul>
                         </div>
                         <div class="lecture-video-detail-body">
@@ -405,17 +385,8 @@ START COURSE-DASHBOARD
                                         <div class="section-block"></div>
                                         <div class="lecture-overview-item">
                                             <div class="lecture-overview-stats-wrap d-flex">
-                                                <div class="lecture-overview-stats-item">
-                                                    <h3 class="fs-16 font-weight-semi-bold pb-2">Certificates</h3>
-                                                </div><!-- end lecture-overview-stats-item -->
-                                                <div
-                                                    class="lecture-overview-stats-item lecture-overview-stats-wide-item">
-                                                    <p class="pb-3">Get Aduca certificate by completing entire course
-                                                    </p>
-                                                    <a href="#"
-                                                        class="btn theme-btn theme-btn-transparent">Aduca
-                                                        Certificate</a>
-                                                </div><!-- end lecture-overview-stats-item -->
+
+
                                             </div><!-- end lecture-overview-stats-wrap -->
                                         </div><!-- end lecture-overview-item -->
                                         <div class="section-block"></div>
@@ -433,23 +404,7 @@ START COURSE-DASHBOARD
                                             </div><!-- end lecture-overview-stats-wrap -->
                                         </div><!-- end lecture-overview-item -->
                                         <div class="section-block"></div>
-                                        <div class="lecture-overview-item">
-                                            <div class="lecture-overview-stats-wrap d-flex">
-                                                <div class="lecture-overview-stats-item">
-                                                    <h3 class="fs-16 font-weight-semi-bold pb-2">Description</h3>
-                                                </div><!-- end lecture-overview-stats-item -->
-                                                <div
-                                                    class="lecture-overview-stats-item lecture-overview-stats-wide-item lecture-description">
-                                                    <h3 class="fs-16 font-weight-semi-bold pb-2">From the Author of the
-                                                        Best Selling After Effects CC 2020 Complete Course</h3>
-                                                    <p> {!! $course->course->description !!} </p>
 
-
-
-
-                                                </div><!-- end lecture-overview-stats-item -->
-                                            </div><!-- end lecture-overview-stats-wrap -->
-                                        </div><!-- end lecture-overview-item -->
                                         <div class="section-block"></div>
 
                                     </div><!-- end lecture-overview-wrap -->
@@ -608,115 +563,6 @@ START COURSE-DASHBOARD
                                         </div>
                                     </div>
                                 </div><!-- end tab-pane -->
-                                <div class="tab-pane fade" id="announcements" role="tabpanel"
-                                    aria-labelledby="announcements-tab">
-                                    <div class="lecture-overview-wrap lecture-announcement-wrap">
-                                        <div class="lecture-overview-item">
-                                            <div class="media media-card align-items-center">
-                                                <a href="teacher-detail.html"
-                                                    class="media-img d-block rounded-full avatar-md">
-                                                    <img src="images/small-avatar-1.jpg" alt="Instructor avatar"
-                                                        class="rounded-full">
-                                                </a>
-                                                <div class="media-body">
-                                                    <h5 class="pb-1"><a href="teacher-detail.html">Alex Smith</a>
-                                                    </h5>
-                                                    <div class="announcement-meta fs-15">
-                                                        <span>Posted an announcement</span>
-                                                        <span> · 3 years ago ·</span>
-                                                        <a href="#" class="btn-text" data-toggle="modal"
-                                                            data-target="#reportModal" title="Report abuse"><i
-                                                                class="la la-flag"></i></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="lecture-owner-decription pt-4">
-                                                <h3 class="fs-19 font-weight-semi-bold pb-3">Important Q&A support</h3>
-                                                <p>Happy 2019 to everyone, thank you for being a student and all of your
-                                                    support.</p>
-                                                <p><strong>Great job on enrolling and your current course progress. I
-                                                        encourage you keep in pursuit of your dreams :)</strong></p>
-                                                <p>The whole lot. In my course After Effects Complete Course packed with
-                                                    all Techniques and Methods (No Tricks and gimmicks).</p>
-                                                <p class="font-italic"><strong>Unfortunately this will result in
-                                                        delayed responses by me in the Q&A section and to direct
-                                                        messages. This is only for the next week and once back I will be
-                                                        back to 100% .</strong></p>
-                                                <p>I will continue to do my best to respond to as many questions as
-                                                    possible but only one person, regularly I spend 4-5 hours daily on
-                                                    this and with over 440000 students as you can image that its a lot
-                                                    of work.</p>
-                                                <p class="font-italic">Thank you once again for your understanding and
-                                                    for all of the wonderful students who I have had an opportunity to
-                                                    communicate with regularly and all of your encouragement.</p>
-                                                <p>Have an awesome day</p>
-                                                <p>Alex</p>
-                                            </div>
-                                            <div class="lecture-announcement-comment-wrap pt-4">
-                                                <div class="media media-card align-items-center">
-                                                    <div class="media-img rounded-full avatar-sm flex-shrink-0">
-                                                        <img src="images/small-avatar-1.jpg" alt="Instructor avatar"
-                                                            class="rounded-full">
-                                                    </div><!-- end media-img -->
-                                                    <div class="media-body">
-                                                        <form action="#">
-                                                            <div class="input-group">
-                                                                <input
-                                                                    class="form-control form--control form--control-gray pl-3"
-                                                                    type="text" name="search"
-                                                                    placeholder="Enter your comment">
-                                                                <div class="input-group-append">
-                                                                    <button class="btn theme-btn" type="button"><i
-                                                                            class="la la-arrow-right"></i></button>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div><!-- end media-body -->
-                                                </div><!-- end media -->
-                                                <div class="comments pt-40px">
-                                                    <div
-                                                        class="media media-card mb-3 border-bottom border-bottom-gray pb-3">
-                                                        <div class="media-img rounded-full avatar-sm flex-shrink-0">
-                                                            <img src="images/small-avatar-2.jpg"
-                                                                alt="Instructor avatar" class="rounded-full">
-                                                        </div><!-- end media-img -->
-                                                        <div class="media-body">
-                                                            <div class="announcement-meta fs-15 lh-20">
-                                                                <a href="#" class="text-color">Tony Olsson</a>
-                                                                <span> · 3 years ago ·</span>
-                                                                <a href="#" class="btn-text"
-                                                                    data-toggle="modal" data-target="#reportModal"
-                                                                    title="Report abuse"><i
-                                                                        class="la la-flag"></i></a>
-                                                            </div>
-                                                            <p class="pt-1">Occaecati cupiditate non provident,
-                                                                similique sunt in culpa fuga.</p>
-                                                        </div><!-- end media-body -->
-                                                    </div><!-- end media -->
-                                                    <div
-                                                        class="media media-card mb-3 border-bottom border-bottom-gray pb-3">
-                                                        <div class="media-img rounded-full avatar-sm flex-shrink-0">
-                                                            <img src="images/small-avatar-3.jpg"
-                                                                alt="Instructor avatar" class="rounded-full">
-                                                        </div><!-- end media-img -->
-                                                        <div class="media-body">
-                                                            <div class="announcement-meta fs-15 lh-20">
-                                                                <a href="#" class="text-color">Eduard-Dan</a>
-                                                                <span> · 2 years ago ·</span>
-                                                                <a href="#" class="btn-text"
-                                                                    data-toggle="modal" data-target="#reportModal"
-                                                                    title="Report abuse"><i
-                                                                        class="la la-flag"></i></a>
-                                                            </div>
-                                                            <p class="pt-1">Occaecati cupiditate non provident,
-                                                                similique sunt in culpa fuga.</p>
-                                                        </div><!-- end media-body -->
-                                                    </div><!-- end media -->
-                                                </div><!-- end comments -->
-                                            </div><!-- end lecture-announcement-comment-wrap -->
-                                        </div><!-- end lecture-overview-item -->
-                                    </div>
-                                </div><!-- end tab-pane -->
                             </div><!-- end tab-content -->
                         </div><!-- end lecture-video-detail-body -->
                     </div><!-- end lecture-video-detail -->
@@ -726,7 +572,8 @@ START COURSE-DASHBOARD
                                 <div class="col-lg-6">
                                     <div class="cta-content-wrap">
                                         <h3 class="fs-18 font-weight-semi-bold">Top companies choose <a
-                                                href="for-business.html" class="text-color hover-underline">Aduca for
+                                                href="{{ url('/') }}" class="text-color hover-underline">Algo
+                                                Oasis for
                                                 Business</a> to build in-demand career skills.</h3>
                                     </div>
                                 </div><!-- end col-lg-6 -->
@@ -746,58 +593,86 @@ START COURSE-DASHBOARD
                             </div><!-- end row -->
                         </div><!-- end container-fluid -->
                     </div><!-- end cta-area -->
-                    <div class="footer-area pt-50px">
+                    @php
+                        $setting = App\Models\SiteSetting::find(1);
+                        $categories = App\Models\Category::orderBy('category_name', 'ASC')->limit(6)->get();
+                        $blogPosts = App\Models\BlogPost::latest()->limit(3)->get();
+                    @endphp
+                    <section class="footer-area pt-50px">
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-lg-3 responsive-column-half">
                                     <div class="footer-item">
-                                        <a href="index.html">
-                                            <img src="{{ asset('frontend/images/logo.png') }}" alt="footer logo"
+                                        <a href="{{ url('/') }}">
+                                            <img src="{{ asset($setting->logo) }}" alt="footer logo"
                                                 class="footer__logo">
                                         </a>
                                         <ul class="generic-list-item pt-4">
-                                            <li><a href="tel:+1631237884">+163 123 7884</a></li>
-                                            <li><a href="mailto:support@wbsite.com">support@website.com</a></li>
-                                            <li>Melbourne, Australia, 105 South Park Avenue</li>
+                                            <li><a href="tel:+1631237884">{{ $setting->phone }}</a></li>
+                                            <li><a href="mailto:support@wbsite.com">{{ $setting->email }}</a></li>
+                                            <li>{{ $setting->address }}</li>
+                                        </ul>
+                                        <h3 class="fs-20 font-weight-semi-bold pt-4 pb-2">We are on</h3>
+                                        <ul class="social-icons social-icons-styled">
+                                            @if ($setting->facebook)
+                                                <li class="mr-1"><a href="{{ $setting->facebook }}"
+                                                        class="facebook-bg" target="_blank"><i
+                                                            class="la la-facebook"></i></a></li>
+                                            @endif
+                                            @if ($setting->twitter)
+                                                <li class="mr-1"><a href="{{ $setting->twitter }}"
+                                                        class="twitter-bg" target="_blank"><i
+                                                            class="la la-twitter"></i></a></li>
+                                            @endif
                                         </ul>
                                     </div><!-- end footer-item -->
                                 </div><!-- end col-lg-3 -->
                                 <div class="col-lg-3 responsive-column-half">
                                     <div class="footer-item">
-                                        <h3 class="fs-20 font-weight-semi-bold pb-3">Company</h3>
+                                        <h3 class="fs-20 font-weight-semi-bold">Company</h3>
+                                        <span class="section-divider section--divider"></span>
                                         <ul class="generic-list-item">
-                                            <li><a href="#">About us</a></li>
-                                            <li><a href="#">Contact us</a></li>
-                                            <li><a href="#">Become a Teacher</a></li>
-                                            <li><a href="#">Support</a></li>
-                                            <li><a href="#">FAQs</a></li>
-                                            <li><a href="#">Blog</a></li>
+                                            <li><a href="{{ url('/') }}">About us</a></li>
+                                            <li><a href="{{ url('/contact') }}">Contact us</a></li>
+                                            <li><a href="{{ route('become.instructor') }}">Become a Teacher</a></li>
+                                            <li><a href="{{ url('/support') }}">Support</a></li>
+                                            <li><a href="{{ url('/faq') }}">FAQs</a></li>
+                                            @if ($blogPosts->count() > 0)
+                                                <li><a href="{{ url('/blog') }}">Blog</a></li>
+                                            @endif
                                         </ul>
                                     </div><!-- end footer-item -->
                                 </div><!-- end col-lg-3 -->
                                 <div class="col-lg-3 responsive-column-half">
                                     <div class="footer-item">
-                                        <h3 class="fs-20 font-weight-semi-bold pb-3">Courses</h3>
+                                        <h3 class="fs-20 font-weight-semi-bold">Courses</h3>
+                                        <span class="section-divider section--divider"></span>
                                         <ul class="generic-list-item">
-                                            <li><a href="#">Web Development</a></li>
-                                            <li><a href="#">Hacking</a></li>
-                                            <li><a href="#">PHP Learning</a></li>
-                                            <li><a href="#">Spoken English</a></li>
-                                            <li><a href="#">Self-Driving Car</a></li>
-                                            <li><a href="#">Garbage Collectors</a></li>
+                                            @forelse($categories as $category)
+                                                <li><a
+                                                        href="{{ url('category/' . $category->id . '/' . $category->category_slug) }}">{{ $category->category_name }}</a>
+                                                </li>
+                                            @empty
+                                                <li><a href="#">Web Development</a></li>
+                                                <li><a href="#">Programming</a></li>
+                                                <li><a href="#">Business</a></li>
+                                                <li><a href="#">Design</a></li>
+                                            @endforelse
                                         </ul>
                                     </div><!-- end footer-item -->
                                 </div><!-- end col-lg-3 -->
                                 <div class="col-lg-3 responsive-column-half">
                                     <div class="footer-item">
-                                        <h3 class="fs-20 font-weight-semi-bold pb-3">Download App</h3>
+                                        <h3 class="fs-20 font-weight-semi-bold">Download App</h3>
+                                        <span class="section-divider section--divider"></span>
                                         <div class="mobile-app">
                                             <p class="pb-3 lh-24">Download our mobile app and learn on the go.</p>
                                             <a href="#" class="d-block mb-2 hover-s"><img
-                                                    src="images/appstore.png" alt="App store" class="img-fluid"></a>
-                                            <a href="#" class="d-block hover-s"><img
-                                                    src="images/googleplay.png" alt="Google play store"
+                                                    src="{{ asset('frontend/images/appstore.png') }}" alt="App store"
                                                     class="img-fluid"></a>
+                                            <a href="#" class="d-block hover-s"><img
+                                                    src="{{ asset('frontend/images/googleplay.png') }}"
+                                                    alt="Google play store" class="img-fluid"></a>
                                         </div>
                                     </div><!-- end footer-item -->
                                 </div><!-- end col-lg-3 -->
@@ -808,36 +683,20 @@ START COURSE-DASHBOARD
                             <div class="container-fluid">
                                 <div class="row align-items-center">
                                     <div class="col-lg-6">
-                                        <p class="copy-desc">&copy; 2021 Aduca. All Rights Reserved. by <a
-                                                href="https://techydevs.com/">TechyDevs</a></p>
+                                        <p class="copy-desc"> {{ $setting->copyright }}</p>
                                     </div><!-- end col-lg-6 -->
                                     <div class="col-lg-6">
                                         <div class="d-flex flex-wrap align-items-center justify-content-end">
                                             <ul class="generic-list-item d-flex flex-wrap align-items-center fs-14">
-                                                <li class="mr-3"><a href="terms-and-conditions.html">Terms &
+                                                <li class="mr-3"><a href="{{ route('terms.conditions') }}">Terms &
                                                         Conditions</a></li>
-                                                <li class="mr-3"><a href="privacy-policy.html">Privacy Policy</a>
+                                                <li class="mr-3"><a href="{{ route('privacy.policy') }}">Privacy
+                                                        Policy</a>
                                                 </li>
                                             </ul>
                                             <div class="select-container select-container-sm">
                                                 <select class="select-container-select">
                                                     <option value="1">English</option>
-                                                    <option value="2">Deutsch</option>
-                                                    <option value="3">Español</option>
-                                                    <option value="4">Français</option>
-                                                    <option value="5">Bahasa Indonesia</option>
-                                                    <option value="6">Bangla</option>
-                                                    <option value="7">日本語</option>
-                                                    <option value="8">한국어</option>
-                                                    <option value="9">Nederlands</option>
-                                                    <option value="10">Polski</option>
-                                                    <option value="11">Português</option>
-                                                    <option value="12">Română</option>
-                                                    <option value="13">Русский</option>
-                                                    <option value="14">ภาษาไทย</option>
-                                                    <option value="15">Türkçe</option>
-                                                    <option value="16">中文(简体)</option>
-                                                    <option value="17">中文(繁體)</option>
                                                     <option value="17">Hindi</option>
                                                 </select>
                                             </div>
@@ -846,7 +705,7 @@ START COURSE-DASHBOARD
                                 </div><!-- end row -->
                             </div><!-- end container-fluid -->
                         </div><!-- end copyright-content -->
-                    </div><!-- end footer-area -->
+                    </section><!-- end footer-area -->
                 </div><!-- end course-dashboard-column -->
                 <div class="course-dashboard-sidebar-column">
                     <button class="sidebar-open" type="button"><i class="la la-angle-left"></i> Course
@@ -965,23 +824,10 @@ START COURSE-DASHBOARD
                         <span aria-hidden="true" class="la la-times"></span>
                     </button>
                 </div><!-- end modal-header -->
-                <div class="modal-body text-center py-5">
-                    <div class="leave-rating mt-5">
-                        <input type="radio" name='rate' id="star5" />
-                        <label for="star5" class="fs-45"></label>
-                        <input type="radio" name='rate' id="star4" />
-                        <label for="star4" class="fs-45"></label>
-                        <input type="radio" name='rate' id="star3" />
-                        <label for="star3" class="fs-45"></label>
-                        <input type="radio" name='rate' id="star2" />
-                        <label for="star2" class="fs-45"></label>
-                        <input type="radio" name='rate' id="star1" />
-                        <label for="star1" class="fs-45"></label>
-                        <div class="rating-result-text fs-20 pb-4"></div>
-                    </div><!-- end leave-rating -->
-                </div><!-- end modal-body -->
-            </div><!-- end modal-content -->
-        </div><!-- end modal-dialog -->
+
+            </div><!-- end modal-body -->
+        </div><!-- end modal-content -->
+    </div><!-- end modal-dialog -->
     </div><!-- end modal -->
 
     <!-- Modal -->
@@ -1000,19 +846,23 @@ START COURSE-DASHBOARD
                         <span class="success-message">Copied!</span>
                         <div class="input-group">
                             <input type="text" class="form-control form--control copy-input pl-3"
-                                value="https://www.aduca.com/share/101WxMB0oac1hVQQ==/">
+                                id="courseShareUrl"
+                                value="{{ url('/course/details/' . $course->course->id . '/' . $course->course->course_name_slug) }}">
                             <div class="input-group-append">
-                                <button class="btn theme-btn theme-btn-sm copy-btn shadow-none"><i
-                                        class="la la-copy mr-1"></i> Copy</button>
+                                <button class="btn theme-btn theme-btn-sm copy-btn shadow-none"
+                                    onclick="copyToClipboard()"><i class="la la-copy mr-1"></i> Copy</button>
                             </div>
                         </div>
                     </div><!-- end copy-to-clipboard -->
                 </div><!-- end modal-body -->
                 <div class="modal-footer justify-content-center border-top-gray">
                     <ul class="social-icons social-icons-styled">
-                        <li><a href="#" class="facebook-bg"><i class="la la-facebook"></i></a></li>
-                        <li><a href="#" class="twitter-bg"><i class="la la-twitter"></i></a></li>
-                        <li><a href="#" class="instagram-bg"><i class="la la-instagram"></i></a></li>
+                        <li><a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url('/course/details/' . $course->course->id . '/' . $course->course->course_name_slug)) }}"
+                                target="_blank" class="facebook-bg"><i class="la la-facebook"></i></a></li>
+                        <li><a href="https://twitter.com/intent/tweet?url={{ urlencode(url('/course/details/' . $course->course->id . '/' . $course->course->course_name_slug)) }}&text={{ urlencode($course->course->course_name) }}"
+                                target="_blank" class="twitter-bg"><i class="la la-twitter"></i></a></li>
+                        <li><a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(url('/course/details/' . $course->course->id . '/' . $course->course->course_name_slug)) }}"
+                                target="_blank" class="instagram-bg"><i class="la la-linkedin"></i></a></li>
                     </ul>
                 </div><!-- end modal-footer -->
             </div><!-- end modal-content-->
@@ -1028,10 +878,10 @@ START COURSE-DASHBOARD
                     <div class="pr-2">
                         <h5 class="modal-title fs-19 font-weight-semi-bold lh-24" id="reportModalTitle">Report Abuse
                         </h5>
-                        <p class="pt-1 fs-14 lh-24">Flagged content is reviewed by Aduca staff to determine whether it
+                        <p class="pt-1 fs-14 lh-24">Flagged content is reviewed by our staff to determine whether it
                             violates Terms of Service or Community Guidelines. If you have a question or technical
                             issue, please contact our
-                            <a href="contact.html" class="text-color hover-underline">Support team here</a>.
+                            <a href="{{ url('/contact') }}" class="text-color hover-underline">Support team here</a>.
                         </p>
                     </div>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -1151,6 +1001,25 @@ START COURSE-DASHBOARD
 
 
     <script type="text/javascript">
+        // Function to copy URL to clipboard
+        function copyToClipboard() {
+            const copyText = document.getElementById("courseShareUrl");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // For mobile devices
+
+            // Copy the text
+            navigator.clipboard.writeText(copyText.value).then(function() {
+                // Show success message
+                const successMsg = document.querySelector('.success-message');
+                successMsg.style.display = 'block';
+                setTimeout(function() {
+                    successMsg.style.display = 'none';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+
         // Function to convert YouTube watch URL to embed URL
         function convertToEmbedUrl(url) {
             if (!url) return url;

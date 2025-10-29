@@ -240,8 +240,9 @@
                     <h3 class="fs-22 font-weight-semi-bold pb-4">About the author</h3>
                     <div class="media media-card">
                         <div class="media-img rounded-full avatar-lg mr-4">
-                            @if($admin && !empty($admin->photo))
-                                <img src="{{ asset('upload/admin_images/'.$admin->photo) }}" alt="Admin Avatar" class="rounded-full">
+                            @if ($admin && !empty($admin->photo))
+                                <img src="{{ asset('upload/admin_images/' . $admin->photo) }}" alt="Admin Avatar"
+                                    class="rounded-full">
                             @else
                                 <img src="{{ asset('upload/no_image.jpg') }}" alt="Avatar image" class="rounded-full">
                             @endif

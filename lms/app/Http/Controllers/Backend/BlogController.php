@@ -243,10 +243,10 @@ class BlogController extends Controller
         $tags_all = $tags ? explode(',', $tags) : [];
         $bcategory = BlogCategory::latest()->get();
         $post = BlogPost::latest()->limit(3)->get();
-        
+
         // Get admin user (role = 'admin')
         $admin = \App\Models\User::where('role', 'admin')->first();
-        
+
         return view('frontend.blog.blog_details', compact('blog', 'tags_all', 'bcategory', 'post', 'admin'));
 
     }// End Method 

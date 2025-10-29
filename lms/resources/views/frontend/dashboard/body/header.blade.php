@@ -74,9 +74,11 @@ $wishlistCount = App\Models\Wishlist::where('user_id', $id)->count();
                                                                     @endif
                                                                 </div>
                                                             </div>
-                                                            <a href="{{ route('add.to.cart', [$item->course_id, $item->course->course_name_slug, $item->course->instructor_id]) }}"
+                                                            <button type="button"
+                                                                onclick="addToCart({{ $item->course_id }}, '{{ $item->course->course_name }}', {{ $item->course->instructor_id }}, '{{ $item->course->course_name_slug }}')"
                                                                 class="btn theme-btn theme-btn-sm theme-btn-transparent lh-28 w-100 mt-3">Add
-                                                                to cart <i class="la la-arrow-right icon ml-1"></i></a>
+                                                                to cart <i
+                                                                    class="la la-arrow-right icon ml-1"></i></button>
                                                         </li>
                                                     @empty
                                                         <li>
@@ -98,8 +100,8 @@ $wishlistCount = App\Models\Wishlist::where('user_id', $id)->count();
                                             </li>
                                         </ul>
                                     </div><!-- end shop-cart -->
-                                   
-                                    
+
+
 
 
 
@@ -158,15 +160,15 @@ $wishlistCount = App\Models\Wishlist::where('user_id', $id)->count();
                                                                     stroke-linejoin="round">
                                                                     <circle cx="12" cy="12" r="5">
                                                                     </circle>
-                                                                    <line x1="12" y1="1"
-                                                                        x2="12" y2="3"></line>
-                                                                    <line x1="12" y1="21"
-                                                                        x2="12" y2="23"></line>
-                                                                    <line x1="4.22" y1="4.22"
-                                                                        x2="5.64" y2="5.64">
+                                                                    <line x1="12" y1="1" x2="12"
+                                                                        y2="3"></line>
+                                                                    <line x1="12" y1="21" x2="12"
+                                                                        y2="23"></line>
+                                                                    <line x1="4.22" y1="4.22" x2="5.64"
+                                                                        y2="5.64">
                                                                     </line>
-                                                                    <line x1="18.36" y1="18.36"
-                                                                        x2="19.78" y2="19.78"></line>
+                                                                    <line x1="18.36" y1="18.36" x2="19.78"
+                                                                        y2="19.78"></line>
                                                                     <line x1="1" y1="12"
                                                                         x2="3" y2="12"></line>
                                                                     <line x1="21" y1="12"
@@ -188,7 +190,7 @@ $wishlistCount = App\Models\Wishlist::where('user_id', $id)->count();
                                                             <li>
                                                                 <div class="section-block"></div>
                                                             </li>
-                                                            
+
                                                             <li>
                                                                 <a href="{{ route('my.course') }}">
                                                                     <i class="la la-history mr-1"></i> My Courses

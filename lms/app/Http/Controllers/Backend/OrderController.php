@@ -111,29 +111,46 @@ class OrderController extends Controller
     }// End Method 
 
 
-    public function MyCourse(){
+    public function MyCourse()
+    {
         $id = Auth::user()->id;
 
-        $latestOrders = Order::where('user_id',$id)->select('course_id', DB::raw('MAX(id) as max_id'))->groupBy('course_id');
+        $latestOrders = Order::where('user_id', $id)->select('course_id', DB::raw('MAX(id) as max_id'))->groupBy('course_id');
 
-        $mycourse = Order::joinSub($latestOrders, 'latest_order', function($join) {
+        $mycourse = Order::joinSub($latestOrders, 'latest_order', function ($join) {
             $join->on('orders.id', '=', 'latest_order.max_id');
-        })->orderBy('latest_order.max_id','DESC')->get();
+        })->orderBy('latest_order.max_id', 'DESC')->get();
 
-        return view('frontend.mycourse.my_all_course',compact('mycourse'));
+        return view('frontend.mycourse.my_all_course', compact('mycourse'));
 
     }// End Method 
 
 
-    public function CourseView($course_id){
+    public function CourseView($course_id)
+    {
         $id = Auth::user()->id;
 
-        $course = Order::where('course_id',$course_id)->where('user_id',$id)->first();
-        $section = CourseSection::where('course_id',$course_id)->orderBy('id','asc')->get();
+        // Validate that course_id is numeric
+        if (!is_numeric($course_id)) {
+            abort(404, 'Course not found');
+        }
+
+        $course = Order::where('course_id', $course_id)->where('user_id', $id)->first();
+
+        // Check if user has enrolled in this course
+        if (!$course) {
+            $notification = array(
+                'message' => 'You are not enrolled in this course',
+                'alert-type' => 'error'
+            );
+            return redirect()->route('my.course')->with($notification);
+        }
+
+        $section = CourseSection::where('course_id', $course_id)->orderBy('id', 'asc')->get();
 
         $allquestion = Question::latest()->get();
 
-        return view('frontend.mycourse.course_view',compact('course','section','allquestion'));
+        return view('frontend.mycourse.course_view', compact('course', 'section', 'allquestion'));
 
 
     }// End Method 

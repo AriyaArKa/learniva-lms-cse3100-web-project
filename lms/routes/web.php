@@ -360,7 +360,7 @@ Route::post('/add-to-wishlist/{course_id}', [WishListController::class, 'AddToWi
 
 
 
-Route::post('/cart/data/store/{id}', [CartController::class, 'AddToCart']);
+Route::post('/cart/data/store/{id}', [CartController::class, 'AddToCart'])->name('add.to.cart');
 Route::post('/buy/data/store/{id}', [CartController::class, 'AddToCart']);
 
 
