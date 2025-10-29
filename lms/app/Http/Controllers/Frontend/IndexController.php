@@ -65,10 +65,12 @@ class IndexController extends Controller
         $courses = Course::where('instructor_id', $id)->get();
 
         // Get total students (unique users who purchased courses from this instructor)
-        $totalStudents = \App\Models\Order::where('instructor_id', $id)
-            ->where('payment_status', 'paid')
+        // Join with payments table to check status (count both confirmed and complete payments)
+        $totalStudents = \App\Models\Order::where('orders.instructor_id', $id)
+            ->join('payments', 'orders.payment_id', '=', 'payments.id')
+            ->whereIn('payments.status', ['confirm', 'confirmed', 'complete'])
             ->distinct()
-            ->count('user_id');
+            ->count('orders.user_id');
 
         // Get total reviews for all courses by this instructor
         $courseIds = $courses->pluck('id');

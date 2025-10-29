@@ -7,10 +7,13 @@
 
 
 <div class="logo-box px-4">
-    <a href="index.html" class="logo"><img src="{{ asset('frontend/images/logo.png') }}" alt="logo"></a>
+    <a href="{{ url('/') }}" class="logo">
+        <img src="{{ !empty($setting->logo) ? asset($setting->logo) : asset('frontend/images/logo.png') }}"
+            alt="logo">
+    </a>
 </div>
 <ul class="generic-list-item off-canvas-menu-list off--canvas-menu-list pt-35px">
-    <li class="page-active"><a href="dashboard.html"><svg class="mr-2" xmlns="http://www.w3.org/2000/svg"
+    <li class="page-active"><a href="{{ route('dashboard') }}"><svg class="mr-2" xmlns="http://www.w3.org/2000/svg"
                 height="18px" viewBox="0 0 24 24" width="18px">
                 <path d="M0 0h24v24H0V0z" fill="none" />
                 <path
@@ -28,8 +31,8 @@
                 <path
                     d="M8 16h8v2H8zm0-4h8v2H8zm6-10H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z" />
             </svg> My Courses</a></li>
-    <li><a href="dashboard-quiz.html"><svg class="mr-2" xmlns="http://www.w3.org/2000/svg"
-                enable-background="new 0 0 24 24" height="18px" viewBox="0 0 24 24" width="18px">
+    <li><a href="#"><svg class="mr-2" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24"
+                height="18px" viewBox="0 0 24 24" width="18px">
                 <g>
                     <rect fill="none" height="24" width="24" />
                 </g>
@@ -42,12 +45,17 @@
                 viewBox="0 0 24 24" width="18px">
                 <path d="M0 0h24v24H0V0z" fill="none" />
                 <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z" />
-            </svg> Wishlist <span class="badge badge-info p-1 ml-2" id="wishQty">2</span> </a></li>
+            </svg> Wishlist <span class="badge badge-info p-1 ml-2" id="wishQty"></span> </a></li>
 
 
-    <li><a href="{{ route('live.chat') }}"><svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg> Live Chat <span class="badge badge-info p-1 ml-2">2</span></a></li>
+    <li><a href="{{ route('live.chat') }}"><svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px"
+                viewBox="0 0 24 24" width="18px">
+                <path d="M0 0h24v24H0V0z" fill="none" />
+                <path
+                    d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z" />
+            </svg> Live Chat <span class="badge badge-info p-1 ml-2">2</span></a></li>
 
-    
+
 
     <li><a href="{{ route('user.change.password') }}"><svg class="mr-2" xmlns="http://www.w3.org/2000/svg"
                 height="18px" viewBox="0 0 24 24" width="18px">

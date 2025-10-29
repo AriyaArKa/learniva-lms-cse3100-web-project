@@ -390,7 +390,7 @@
                 </div>
                 <div class="bee-col bee-col-2 bee-col-w8">
                     <div class="bee-block bee-block-1 bee-paragraph">
-                        <p><strong>Hell Sir </strong><br /><strong>Your Request is confirm on this data. </strong></p>
+                        <p><strong>Hello Sir </strong><br /><strong>Your Request is confirm on this data. </strong></p>
 
                         <h3>Invoice : {{ $order['invoice_no'] }}</h3>
                         <h3>Amount : {{ $order['amount'] }}</h3>

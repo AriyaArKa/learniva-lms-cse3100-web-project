@@ -19,7 +19,7 @@
                         <a class="nav-link" href="avascript:;"><i class='bx bx-search'></i>
                         </a>
                     </li>
-                    
+
                     <li class="nav-item dark-mode d-none d-sm-flex">
                         <a class="nav-link dark-mode-icon" href="javascript:;"><i class='bx bx-moon'></i>
                         </a>
@@ -50,7 +50,8 @@
                             <div class="header-notifications-list">
 
                                 @forelse ($user->notifications as $notification)
-                                    <a class="dropdown-item" href="javascript:;" onclick="markNotificationRead('{{ $notification->id }}')">
+                                    <a class="dropdown-item" href="javascript:;"
+                                        onclick="markNotificationRead('{{ $notification->id }}')">
                                         <div class="d-flex align-items-center">
                                             <div class="notify bg-light-danger text-danger">dc
                                             </div>
@@ -73,7 +74,7 @@
                             </a>
                         </div>
                     </li>
-                   
+
                 </ul>
             </div>
 
@@ -93,19 +94,17 @@
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item d-flex align-items-center"
-                            href="{{ route('instructor.profile') }}"><i
+                    <li><a class="dropdown-item d-flex align-items-center" href="{{ route('instructor.profile') }}"><i
                                 class="bx bx-user fs-5"></i><span>Profile</span></a>
                     </li>
                     <li><a class="dropdown-item d-flex align-items-center"
-                            href="{{ route('instructor.change.password') }}"><i
-                                class="bx bx-cog fs-5"></i><span>Change Password</span></a>
+                            href="{{ route('instructor.change.password') }}"><i class="bx bx-cog fs-5"></i><span>Change
+                                Password</span></a>
                     </li>
-                    <li><a class="dropdown-item d-flex align-items-center"
-                            href="{{ route('instructor.dashboard') }}"><i
+                    <li><a class="dropdown-item d-flex align-items-center" href="{{ route('instructor.dashboard') }}"><i
                                 class="bx bx-home-circle fs-5"></i><span>Dashboard</span></a>
                     </li>
-                    
+
                     <li>
                         <div class="dropdown-divider mb-0"></div>
                     </li>
@@ -120,22 +119,79 @@
 
 
 <script>
-    function markNotificationRead(notificationId){
+    function markNotificationRead(notificationId) {
 
-        fetch('/mark-notification-as-read/'+notificationId,{
-            method: 'POST',
-            headers: {
-                'Content-Type' : 'application/josn',
-                'X-CSRF-TOKEN' : '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({})
-        })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('notification-count').textContent = data.count;
-        })
-        .catch(error => {
-            console.log('Error',error)
-        });
+        fetch('/mark-notification-as-read/' + notificationId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/josn',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('notification-count').textContent = data.count;
+            })
+            .catch(error => {
+                console.log('Error', error)
+            });
     }
+
+    // Update chat and wishlist notification counts
+    function updateNotificationCounts() {
+        // Update chat count
+        fetch('/api/instructor/unread-chat-count', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const chatCountElement = document.getElementById('chat-count');
+                if (chatCountElement) {
+                    chatCountElement.textContent = data.count;
+                    // Hide badge if count is 0
+                    if (data.count === 0) {
+                        chatCountElement.style.display = 'none';
+                    } else {
+                        chatCountElement.style.display = 'flex';
+                    }
+                }
+            })
+            .catch(error => console.log('Chat count error:', error));
+
+        // Update wishlist count
+        fetch('/api/instructor/wishlist-count', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const wishlistCountElement = document.getElementById('wishlist-count');
+                if (wishlistCountElement) {
+                    wishlistCountElement.textContent = data.count;
+                    // Hide badge if count is 0
+                    if (data.count === 0) {
+                        wishlistCountElement.style.display = 'none';
+                    } else {
+                        wishlistCountElement.style.display = 'flex';
+                    }
+                }
+            })
+            .catch(error => console.log('Wishlist count error:', error));
+    }
+
+    // Update counts on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateNotificationCounts();
+
+        // Update counts every 5 seconds
+        setInterval(updateNotificationCounts, 5000);
+    });
 </script>
