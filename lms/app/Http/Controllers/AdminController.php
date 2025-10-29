@@ -7,8 +7,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Course;
+use App\Models\Order;
+use App\Models\Payment;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Carbon\Carbon;
 
 
 
@@ -16,7 +19,72 @@ class AdminController extends Controller
 {
     public function AdminDashboard()
     {
-        return view('admin.index');
+        // Get total counts
+        $totalOrders = Order::count();
+        $totalRevenue = Payment::where('status', 'complete')->sum('total_amount');
+        $totalCustomers = User::where('role', 'user')->count();
+        $totalCourses = Course::where('status', 1)->count();
+
+        // Calculate percentage changes (compared to last week)
+        $lastWeekStart = Carbon::now()->subWeek()->startOfWeek();
+        $lastWeekEnd = Carbon::now()->subWeek()->endOfWeek();
+
+        $lastWeekOrders = Order::whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])->count();
+        $currentWeekOrders = Order::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()])->count();
+        $ordersChange = $lastWeekOrders > 0 ? round((($currentWeekOrders - $lastWeekOrders) / $lastWeekOrders) * 100, 1) : 0;
+
+        $lastWeekRevenue = Payment::where('status', 'complete')
+            ->whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])
+            ->sum('total_amount');
+        $currentWeekRevenue = Payment::where('status', 'complete')
+            ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()])
+            ->sum('total_amount');
+        $revenueChange = $lastWeekRevenue > 0 ? round((($currentWeekRevenue - $lastWeekRevenue) / $lastWeekRevenue) * 100, 1) : 0;
+
+        $lastWeekCustomers = User::where('role', 'user')
+            ->whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])
+            ->count();
+        $currentWeekCustomers = User::where('role', 'user')
+            ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()])
+            ->count();
+        $customersChange = $lastWeekCustomers > 0 ? round((($currentWeekCustomers - $lastWeekCustomers) / $lastWeekCustomers) * 100, 1) : 0;
+
+        // Get recent orders with relationships
+        $recentOrders = Order::with(['course', 'user', 'payment'])
+            ->latest()
+            ->take(6)
+            ->get();
+
+        // Get monthly sales data for chart (last 12 months)
+        $monthlySales = [];
+        $monthlyRevenue = [];
+        for ($i = 11; $i >= 0; $i--) {
+            $month = Carbon::now()->subMonths($i);
+            $monthlySales[] = Order::whereYear('created_at', $month->year)
+                ->whereMonth('created_at', $month->month)
+                ->count();
+            $monthlyRevenue[] = Payment::where('status', 'complete')
+                ->whereYear('created_at', $month->year)
+                ->whereMonth('created_at', $month->month)
+                ->sum('total_amount');
+        }
+
+        // Format revenue to numbers (not strings)
+        $totalRevenue = (float) $totalRevenue;
+        $monthlyRevenue = array_map('floatval', $monthlyRevenue);
+
+        return view('admin.index', compact(
+            'totalOrders',
+            'totalRevenue',
+            'totalCustomers',
+            'totalCourses',
+            'ordersChange',
+            'revenueChange',
+            'customersChange',
+            'recentOrders',
+            'monthlySales',
+            'monthlyRevenue'
+        ));
     } //end method
 
     public function AdminLogout(Request $request)
