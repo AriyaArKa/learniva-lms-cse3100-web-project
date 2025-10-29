@@ -49,19 +49,32 @@ class IndexController extends Controller
 
 
     }// End Method
- public function SubCategoryCourse($id, $slug){
+    public function SubCategoryCourse($id, $slug)
+    {
 
-        $courses = Course::where('subcategory_id',$id)->where('status','1')->get();
-        $subcategory = SubCategory::where('id',$id)->first();
+        $courses = Course::where('subcategory_id', $id)->where('status', '1')->get();
+        $subcategory = SubCategory::where('id', $id)->first();
         $categories = Category::latest()->get();
-        return view('frontend.category.subcategory_all',compact('courses','subcategory','categories')); 
-    
+        return view('frontend.category.subcategory_all', compact('courses', 'subcategory', 'categories'));
+
     }// End Method 
- public function InstructorDetails($id){
+    public function InstructorDetails($id)
+    {
 
         $instructor = User::find($id);
-        $courses = Course::where('instructor_id',$id)->get();
-        return view('frontend.instructor.instructor_details',compact('instructor','courses'));
+        $courses = Course::where('instructor_id', $id)->get();
+
+        // Get total students (unique users who purchased courses from this instructor)
+        $totalStudents = \App\Models\Order::where('instructor_id', $id)
+            ->where('payment_status', 'paid')
+            ->distinct()
+            ->count('user_id');
+
+        // Get total reviews for all courses by this instructor
+        $courseIds = $courses->pluck('id');
+        $totalReviews = \App\Models\Review::whereIn('course_id', $courseIds)->count();
+
+        return view('frontend.instructor.instructor_details', compact('instructor', 'courses', 'totalStudents', 'totalReviews'));
 
     }// End Method 
 

@@ -159,9 +159,17 @@
                 </li>
                 <li> <a href="{{ route('blog.post') }}"><i class='bx bx-radio-circle'></i>Blog Post</a>
                 </li>
-
-
-
+                <li> <a href="{{ route('pending.comment') }}"><i class='bx bx-radio-circle'></i>Pending Comments
+                        @php
+                            $pendingCount = App\Models\BlogComment::where('status', 0)->count();
+                        @endphp
+                        @if ($pendingCount > 0)
+                            <span class="badge bg-danger">{{ $pendingCount }}</span>
+                        @endif
+                    </a>
+                </li>
+                <li> <a href="{{ route('approved.comment') }}"><i class='bx bx-radio-circle'></i>Approved Comments</a>
+                </li>
             </ul>
         </li>
 
@@ -200,7 +208,7 @@
             </ul>
         </li>
 
-        
+
     </ul>
     <!--end navigation-->
 </div>

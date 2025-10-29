@@ -1,6 +1,6 @@
 @extends('frontend.master')
 @section('title')
-{{ $blog->post_title  }} | Algo Oasis
+    {{ $course->course_name ?? 'Course Details' }} | Algo Oasis
 @endsection
 
 <style>
@@ -48,8 +48,8 @@
 
 @section('home')
     <!-- ================================
-                                                                    START BREADCRUMB AREA
-                                                                ================================= -->
+                                                                            START BREADCRUMB AREA
+                                                                        ================================= -->
     <section class="breadcrumb-area pt-50px pb-50px bg-white pattern-bg">
         <div class="container">
             <div class="col-lg-8 mr-auto">
@@ -130,7 +130,7 @@
                             <span class="student-total pl-2">{{ number_format($enrollmentCount) }} students</span>
                         </div>
                     </div><!-- end d-flex -->
-                    <p class="pt-2 pb-1">Created by <a href="teacher-detail.html"
+                    <p class="pt-2 pb-1">Created by <a href="{{ route('instructor.details', $course->instructor_id) }}"
                             class="text-color hover-underline">{{ $course->user->name ?? 'Instructor' }}</a></p>
                     <div class="d-flex flex-wrap align-items-center">
                         <p class="pr-3 d-flex align-items-center">
@@ -170,12 +170,12 @@
         </div><!-- end container -->
     </section><!-- end breadcrumb-area -->
     <!-- ================================
-                                                                    END BREADCRUMB AREA
-                                                                ================================= -->
+                                                                            END BREADCRUMB AREA
+                                                                        ================================= -->
 
     <!--======================================
-                                                                        START COURSE DETAILS AREA
-                                                                ======================================-->
+                                                                                START COURSE DETAILS AREA
+                                                                        ======================================-->
     <section class="course-details-area pb-20px">
         <div class="container">
             <div class="row">
@@ -190,8 +190,8 @@
                             </ul>
                         </div><!-- end course-overview-card -->
                         <div class="course-overview-card bg-gray p-4 rounded">
-                            <h3 class="fs-16 font-weight-semi-bold">Curated for the <a href="for-business.html"
-                                    class="text-color hover-underline">Aduca for Business</a> collection</h3>
+                            <h3 class="fs-16 font-weight-semi-bold">Curated for the <a href="{{ route('index') }}"
+                                    class="text-color hover-underline">Algo Oasis for Business</a> collection</h3>
                         </div><!-- end course-overview-card -->
                         <div class="course-overview-card">
                             <h3 class="fs-24 font-weight-semi-bold pb-3">Requirements</h3>
@@ -202,8 +202,8 @@
                             </ul>
                         </div><!-- end course-overview-card -->
                         <div class="course-overview-card border border-gray p-4 rounded">
-                            <h3 class="fs-20 font-weight-semi-bold">Top companies trust Aduca</h3>
-                            <p class="fs-15 pb-1">Get your team access to Aduca's top 5,000+ courses</p>
+                            <h3 class="fs-20 font-weight-semi-bold">Top companies trust Algo Oasis</h3>
+                            <p class="fs-15 pb-1">Get your team access to Algo Oasis's top 5,000+ courses</p>
                             <div class="pb-3">
                                 <img width="85" class="mr-3" src="{{ asset('frontend/images/sponsor-img.png') }}"
                                     alt="company logo">
@@ -214,7 +214,6 @@
                                 <img width="70" class="mr-3" src="{{ asset('frontend/images/sponsor-img4.png') }}"
                                     alt="company logo">
                             </div>
-                            <a href="for-business.html" class="btn theme-btn theme-btn-sm">Try Aduca for Business</a>
                         </div><!-- end course-overview-card -->
                         <div class="course-overview-card">
                             <h3 class="fs-24 font-weight-semi-bold pb-3">Description</h3>
@@ -315,7 +314,8 @@
                             <div class="instructor-wrap">
                                 <div class="media media-card">
                                     <div class="instructor-img">
-                                        <a href="teacher-detail.html" class="media-img d-block">
+                                        <a href="{{ route('instructor.details', $course->instructor_id) }}"
+                                            class="media-img d-block">
                                             <img class="lazy"
                                                 src="{{ !empty($course->user->photo) ? url('upload/instructor_images/' . $course->user->photo) : url('upload/no_image.jpg') }}"
                                                 data-src="images/small-avatar-1.jpg" alt="Avatar image">
@@ -327,13 +327,15 @@
                                             <li><i class="la la-play-circle-o mr-2 text-color-3"></i>
                                                 {{ count($instructorCourses) }} Courses</li>
 
-                                            <li><a href="teacher-detail.html">View all Courses</a></li>
+                                            <li><a href="{{ route('instructor.details', $course->instructor_id) }}">View
+                                                    all Courses</a></li>
                                         </ul>
                                     </div><!-- end instructor-img -->
 
 
                                     <div class="media-body">
-                                        <h5><a href="teacher-detail.html">{{ $course->user->name ?? 'Instructor' }}</a>
+                                        <h5><a
+                                                href="{{ route('instructor.details', $course->instructor_id) }}">{{ $course->user->name ?? 'Instructor' }}</a>
                                         </h5>
                                         <span class="d-block lh-18 pt-2 pb-3">Joined
                                             {{ Carbon\Carbon::parse($course->user->created_at ?? now())->diffForHumans() }}</span>
@@ -374,100 +376,101 @@
                             <div class="feedback-wrap">
                                 <div class="media media-card align-items-center">
                                     <div class="review-rating-summary">
-                                    <span class="stats-average__count">{{ round($avarage,1) }}</span>
+                                        <span class="stats-average__count">{{ round($avarage, 1) }}</span>
                                         <div class="rating-wrap pt-1">
                                             <div class="review-stars">
                                                 @if ($avarage == 0)
-                                        <span class="la la-star-o"></span>
-                                        <span class="la la-star-o"></span>
-                                        <span class="la la-star-o"></span>
-                                        <span class="la la-star-o"></span>
-                                        <span class="la la-star-o"></span>
-                                        @elseif ($avarage == 1 || $avarage < 2)
-                                        <span class="la la-star"></span>
-                                        <span class="la la-star-o"></span>
-                                        <span class="la la-star-o"></span>
-                                        <span class="la la-star-o"></span>
-                                        <span class="la la-star-o"></span>
-                                        @elseif ($avarage == 2 || $avarage < 3)
-                                        <span class="la la-star"></span>
-                                        <span class="la la-star"></span>
-                                        <span class="la la-star-o"></span>
-                                        <span class="la la-star-o"></span>
-                                        <span class="la la-star-o"></span>
-                                        @elseif ($avarage == 3 || $avarage < 4)
-                                        <span class="la la-star"></span>
-                                        <span class="la la-star"></span>
-                                        <span class="la la-star"></span>
-                                        <span class="la la-star-o"></span>
-                                        <span class="la la-star-o"></span>
-                                        @elseif ($avarage == 4 || $avarage < 5)
-                                        <span class="la la-star"></span>
-                                        <span class="la la-star"></span>
-                                        <span class="la la-star"></span>
-                                        <span class="la la-star"></span>
-                                        <span class="la la-star-o"></span>
-                                        @elseif ($avarage == 5 || $avarage < 5)
-                                        <span class="la la-star"></span>
-                                        <span class="la la-star"></span>
-                                        <span class="la la-star"></span>
-                                        <span class="la la-star"></span>
-                                        <span class="la la-star"></span>
-                                        @endif 
+                                                    <span class="la la-star-o"></span>
+                                                    <span class="la la-star-o"></span>
+                                                    <span class="la la-star-o"></span>
+                                                    <span class="la la-star-o"></span>
+                                                    <span class="la la-star-o"></span>
+                                                @elseif ($avarage == 1 || $avarage < 2)
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star-o"></span>
+                                                    <span class="la la-star-o"></span>
+                                                    <span class="la la-star-o"></span>
+                                                    <span class="la la-star-o"></span>
+                                                @elseif ($avarage == 2 || $avarage < 3)
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star-o"></span>
+                                                    <span class="la la-star-o"></span>
+                                                    <span class="la la-star-o"></span>
+                                                @elseif ($avarage == 3 || $avarage < 4)
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star-o"></span>
+                                                    <span class="la la-star-o"></span>
+                                                @elseif ($avarage == 4 || $avarage < 5)
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star-o"></span>
+                                                @elseif ($avarage == 5 || $avarage < 5)
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star"></span>
+                                                    <span class="la la-star"></span>
+                                                @endif
                                             </div>
-                                       <span class="rating-total d-block">({{ count($reviewcount) }})</span>
+                                            <span class="rating-total d-block">({{ count($reviewcount) }})</span>
                                             <span>Course Rating</span>
                                         </div><!-- end rating-wrap -->
                                     </div><!-- end review-rating-summary -->
 
                                     <div class="media-body">
 
-        @php
-            $reviewcount = App\Models\Review::where('course_id',$course->id)
-                            ->where('status',1)
-                            ->select('rating', DB::raw('count(*) as count'))
-                            ->groupBy('rating')
-                            ->orderBy('rating','desc')
-                            ->get();
-            $totalReviews = $reviewcount->sum('count');
+                                        @php
+                                            $reviewcount = App\Models\Review::where('course_id', $course->id)
+                                                ->where('status', 1)
+                                                ->select('rating', DB::raw('count(*) as count'))
+                                                ->groupBy('rating')
+                                                ->orderBy('rating', 'desc')
+                                                ->get();
+                                            $totalReviews = $reviewcount->sum('count');
 
-            $percentages = [];
+                                            $percentages = [];
 
-            for ($i=5; $i >= 1 ; $i--) { 
-                $ratingCount = $reviewcount->where('rating',$i)->first();
-                $count =  $ratingCount ? $ratingCount->count : 0;
-                $percent = $totalReviews  > 0 ? ($count / $totalReviews) * 100 : 0;
-                $percentages[] = [
-                    'rating' => $i,
-                    'percent' => $percent,
-                    'count' => $count,
-               ];
-            } 
-        @endphp
+                                            for ($i = 5; $i >= 1; $i--) {
+                                                $ratingCount = $reviewcount->where('rating', $i)->first();
+                                                $count = $ratingCount ? $ratingCount->count : 0;
+                                                $percent = $totalReviews > 0 ? ($count / $totalReviews) * 100 : 0;
+                                                $percentages[] = [
+                                                    'rating' => $i,
+                                                    'percent' => $percent,
+                                                    'count' => $count,
+                                                ];
+                                            }
+                                        @endphp
 
 
-        @if (count($percentages) > 0) 
-        @foreach ($percentages as $ratingInfo)
-            
-        <div class="review-bars d-flex align-items-center mb-2">
-            <div class="review-bars__text">{{ $ratingInfo['rating'] }} stars</div>
-            <div class="review-bars__fill">
-                <div class="skillbar-box">
-   <div class="skillbar" data-percent="{{ $ratingInfo['percent'] }}%">
-                        <div class="skillbar-bar bg-3" style="width: {{ $ratingInfo['percent'] }}%;" ></div>
-                    </div> <!-- End Skill Bar -->
-                </div>
-            </div><!-- end review-bars__fill -->
-            <div class="review-bars__percent">{{ number_format($ratingInfo['percent'], 2) }}%</div>
-        </div><!-- end review-bars -->
-        
-        @endforeach
-        @else
-        <p>No Reviews Available</p>
-        @endif
-      
-    
-    </div><!-- end media-body -->
+                                        @if (count($percentages) > 0)
+                                            @foreach ($percentages as $ratingInfo)
+                                                <div class="review-bars d-flex align-items-center mb-2">
+                                                    <div class="review-bars__text">{{ $ratingInfo['rating'] }} stars</div>
+                                                    <div class="review-bars__fill">
+                                                        <div class="skillbar-box">
+                                                            <div class="skillbar"
+                                                                data-percent="{{ $ratingInfo['percent'] }}%">
+                                                                <div class="skillbar-bar bg-3"
+                                                                    style="width: {{ $ratingInfo['percent'] }}%;"></div>
+                                                            </div> <!-- End Skill Bar -->
+                                                        </div>
+                                                    </div><!-- end review-bars__fill -->
+                                                    <div class="review-bars__percent">
+                                                        {{ number_format($ratingInfo['percent'], 2) }}%</div>
+                                                </div><!-- end review-bars -->
+                                            @endforeach
+                                        @else
+                                            <p>No Reviews Available</p>
+                                        @endif
+
+
+                                    </div><!-- end media-body -->
 
                                 </div>
                             </div><!-- end feedback-wrap -->
@@ -703,9 +706,9 @@
                                                 hours on-demand video</li>
                                             <li><i class="la la-file mr-2 text-color"></i>{{ $course->resources }}
                                                 articles</li>
-                                            <li><i class="la la-file-text mr-2 text-color"></i>12 downloadable resources
+
                                             </li>
-                                            <li><i class="la la-code mr-2 text-color"></i>51 coding exercises</li>
+
                                             <li><i class="la la-key mr-2 text-color"></i>Full lifetime access</li>
                                             <li><i class="la la-television mr-2 text-color"></i>Access on mobile and TV
                                             </li>
@@ -713,14 +716,7 @@
                                             </li>
                                         </ul>
                                         <div class="section-block"></div>
-                                        <div class="buy-for-team-container pt-4">
-                                            <h3 class="fs-18 font-weight-semi-bold pb-2">Training 5 or more people?</h3>
-                                            <p class="lh-24 pb-3">Get your team access to 3,000+ top Aduca courses anytime,
-                                                anywhere.</p>
-                                            <a href="for-business.html"
-                                                class="btn theme-btn theme-btn-sm theme-btn-transparent lh-30 w-100">Try
-                                                Aduca for Business</a>
-                                        </div>
+
                                     </div><!-- end preview-course-incentives -->
                                 </div><!-- end preview-course-content -->
                             </div>
@@ -820,16 +816,17 @@
         </div><!-- end container -->
     </section><!-- end course-details-area -->
     <!--======================================
-                                                                        END COURSE DETAILS AREA
-                                                                ======================================-->
+                                                                                END COURSE DETAILS AREA
+                                                                        ======================================-->
 
     <!--======================================
-                                                                        START RELATED COURSE AREA
-                                                                ======================================-->
+                                                                                START RELATED COURSE AREA
+                                                                        ======================================-->
     <section class="related-course-area bg-gray pt-60px pb-60px">
         <div class="container">
             <div class="related-course-wrap">
-                <h3 class="fs-28 font-weight-semi-bold pb-35px">More Courses by <a href="teacher-detail.html"
+                <h3 class="fs-28 font-weight-semi-bold pb-35px">More Courses by <a
+                        href="{{ route('instructor.details', $course->instructor_id) }}"
                         class="text-color hover-underline">{{ $course->user->name ?? 'Instructor' }}</a></h3>
                 <div class="view-more-carousel-2 owl-action-styled">
                     @foreach ($instructorCourses as $inscourse)
@@ -865,7 +862,7 @@
                                         href="{{ url('course/details/' . $inscourse->id . '/' . $inscourse->course_name_slug) }}">{{ $inscourse->course_name }}</a>
                                 </h5>
                                 <p class="card-text"><a
-                                        href="teacher-detail.html">{{ $inscourse->user->name ?? 'Instructor' }}</a>
+                                        href="{{ route('instructor.details', $inscourse->instructor_id) }}">{{ $inscourse->user->name ?? 'Instructor' }}</a>
                                 </p>
                                 <div class="rating-wrap d-flex align-items-center py-2">
                                     <div class="review-stars">
@@ -899,12 +896,12 @@
         </div><!-- end container -->
     </section><!-- end related-course-area -->
     <!--======================================
-                                                                        END RELATED COURSE AREA
-                                                                ======================================-->
+                                                                                END RELATED COURSE AREA
+                                                                        ======================================-->
 
     <!--======================================
-                                                                        START CTA AREA
-                                                                ======================================-->
+                                                                                START CTA AREA
+                                                                        ======================================-->
     <section class="cta-area pt-60px pb-60px position-relative overflow-hidden">
         <span class="stroke-shape stroke-shape-1"></span>
         <span class="stroke-shape stroke-shape-2"></span>
@@ -941,7 +938,7 @@
                 </div><!-- end col-lg-9 -->
                 <div class="col-lg-3">
                     <div class="cta-btn-box text-right">
-                        <a href="become-a-teacher.html" class="btn theme-btn">Tech on Aduca <i
+                        <a href="{{ route('become.instructor') }}" class="btn theme-btn">Tech on Algo Oasis <i
                                 class="la la-arrow-right icon ml-1"></i> </a>
                     </div>
                 </div><!-- end col-lg-3 -->
@@ -949,8 +946,8 @@
         </div><!-- end container -->
     </section><!-- end cta-area -->
     <!--======================================
-                                                                        END CTA AREA
-                                                                ======================================-->
+                                                                                END CTA AREA
+                                                                        ======================================-->
 
 
 
@@ -1031,7 +1028,7 @@
                 <div class="modal-header border-bottom-gray">
                     <div class="pr-2">
                         <h5 class="modal-title fs-19 font-weight-semi-bold lh-24" id="reportModalTitle">Report Abuse</h5>
-                        <p class="pt-1 fs-14 lh-24">Flagged content is reviewed by Aduca staff to determine whether it
+                        <p class="pt-1 fs-14 lh-24">Flagged content is reviewed by AlgoOasis staff to determine whether it
                             violates Terms of Service or Community Guidelines. If you have a question or technical issue,
                             please contact our
                             <a href="contact.html" class="text-color hover-underline">Support team here</a>.
@@ -1051,7 +1048,7 @@
                                         <option value>-- Select One --</option>
                                         <option value="1">Inappropriate Course Content</option>
                                         <option value="2">Inappropriate Behavior</option>
-                                        <option value="3">Aduca Policy Violation</option>
+                                        <option value="3">Policy Violation</option>
                                         <option value="4">Spammy Content</option>
                                         <option value="5">Other</option>
                                     </select>

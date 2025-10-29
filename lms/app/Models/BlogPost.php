@@ -12,7 +12,13 @@ class BlogPost extends Model
     protected $guarded = [];
 
 
-    public function blog(){
-        return $this->belongsTo(BlogCategory::class, 'blogcat_id' ,'id');
+    public function blog()
+    {
+        return $this->belongsTo(BlogCategory::class, 'blogcat_id', 'id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(BlogComment::class, 'blog_post_id', 'id')->where('status', 1);
     }
 }

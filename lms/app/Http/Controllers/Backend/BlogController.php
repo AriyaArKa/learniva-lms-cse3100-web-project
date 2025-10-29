@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\BlogCategory;
 use App\Models\BlogPost;
+use App\Models\BlogComment;
 use Intervention\Image\Laravel\Facades\Image;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 
 
@@ -227,38 +229,126 @@ class BlogController extends Controller
 
 
 
-public function BlogDetails($slug){
+    public function BlogDetails($slug)
+    {
 
-    $blog = BlogPost::where('post_slug',$slug)->first();
-    $tags = $blog->post_tags;
-    $tags_all = explode(',',$tags);
-    $bcategory = BlogCategory::latest()->get();
-    $post = BlogPost::latest()->limit(3)->get();
-    return view('frontend.blog.blog_details',compact('blog','tags_all','bcategory','post'));
+        $blog = BlogPost::where('post_slug', $slug)->with('comments.user')->first();
 
-}// End Method 
+        if (!$blog) {
+            abort(404, 'Blog post not found');
+        }
 
+        $tags = $blog->post_tags;
+        $tags_all = $tags ? explode(',', $tags) : [];
+        $bcategory = BlogCategory::latest()->get();
+        $post = BlogPost::latest()->limit(3)->get();
+        return view('frontend.blog.blog_details', compact('blog', 'tags_all', 'bcategory', 'post'));
 
-public function BlogCatList($id){
-
-    $blog = BlogPost::where('blogcat_id',$id)->get();
-    $breadcat = BlogCategory::where('id',$id)->first();
-    $bcategory = BlogCategory::latest()->get();
-    $post = BlogPost::latest()->limit(3)->get();
-    return view('frontend.blog.blog_cat_list',compact('blog','breadcat','bcategory','post'));
-
-}// End Method
+    }// End Method 
 
 
-public function BlogList(){
+    public function BlogCatList($id)
+    {
 
-    $blog = BlogPost::latest()->paginate(2);
-    $bcategory = BlogCategory::latest()->get();
-    $post = BlogPost::latest()->limit(3)->get();
-    return view('frontend.blog.blog_list',compact('blog','bcategory','post'));
+        $blog = BlogPost::where('blogcat_id', $id)->get();
+        $breadcat = BlogCategory::where('id', $id)->first();
+        $bcategory = BlogCategory::latest()->get();
+        $post = BlogPost::latest()->limit(3)->get();
+        return view('frontend.blog.blog_cat_list', compact('blog', 'breadcat', 'bcategory', 'post'));
+
+    }// End Method
 
 
-}// End Method 
+    public function BlogList()
+    {
+
+        $blog = BlogPost::latest()->paginate(2);
+        $bcategory = BlogCategory::latest()->get();
+        $post = BlogPost::latest()->limit(3)->get();
+        return view('frontend.blog.blog_list', compact('blog', 'bcategory', 'post'));
+
+
+    }// End Method 
+
+
+    public function StoreComment(Request $request)
+    {
+        $request->validate([
+            'blog_post_id' => 'required|exists:blog_posts,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'message' => 'required|string',
+        ]);
+
+        BlogComment::create([
+            'blog_post_id' => $request->blog_post_id,
+            'user_id' => Auth::check() ? Auth::id() : null,
+            'name' => $request->name,
+            'email' => $request->email,
+            'message' => $request->message,
+            'status' => 0, // Pending approval
+        ]);
+
+        $notification = array(
+            'message' => 'Comment submitted successfully! It will appear after admin approval.',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
+
+    }// End Method
+
+
+    public function AdminPendingComment()
+    {
+        $comments = BlogComment::with(['blogPost', 'user'])
+            ->where('status', 0)
+            ->latest()
+            ->get();
+
+        return view('admin.backend.comment.pending_comment', compact('comments'));
+
+    }// End Method
+
+
+    public function AdminApprovedComment()
+    {
+        $comments = BlogComment::with(['blogPost', 'user'])
+            ->where('status', 1)
+            ->latest()
+            ->get();
+
+        return view('admin.backend.comment.approved_comment', compact('comments'));
+
+    }// End Method
+
+
+    public function ApproveComment($id)
+    {
+        BlogComment::findOrFail($id)->update(['status' => 1]);
+
+        $notification = array(
+            'message' => 'Comment Approved Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
+
+    }// End Method
+
+
+    public function DeleteComment($id)
+    {
+        BlogComment::findOrFail($id)->delete();
+
+        $notification = array(
+            'message' => 'Comment Deleted Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
+
+    }// End Method
 
 
 

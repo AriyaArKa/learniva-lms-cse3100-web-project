@@ -1,7 +1,5 @@
 @extends('admin.admin_dashboard')
 @section('admin')
-
-
     <style>
         .large-checkbox {
             transform: scale(1.5);
@@ -51,25 +49,34 @@
                                     <td>{{ $item->phone }}</td>
 
                                     <td>
-                                        @if($item->status == 1)
+                                        @if ($item->status == 1)
                                             <span class="btn btn-success">Active</span>
                                         @else
-                                            <span class="btn btn-danger">Inactive</span>
+                                            <span class="badge bg-danger">Inactive</span>
                                         @endif
                                     </td>
 
                                     <td>
-                                        <div class="form-check form-check-danger form-check form-switch">
+                                        <!-- Toggle Switch -->
+                                        <div class="form-check form-switch">
                                             <input class="form-check-input status-toggle large-checkbox" type="checkbox"
-                                                id="flexSwitchCheckCheckedDanger" 
-                                                data-user-id="{{ $item->id }}" {{ $item->status  ? 'checked' : '' }}>
-                                            <label class="form-check-label"
-                                                for="flexSwitchCheckCheckedDanger"></label>
+                                                id="switch{{ $item->id }}" data-user-id="{{ $item->id }}"
+                                                {{ $item->status ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="switch{{ $item->id }}">
+                                                {{ $item->status ? 'Active' : 'Inactive' }}
+                                            </label>
                                         </div>
+
+                                        <!-- Alternative: Click Button -->
+                                        <button
+                                            class="btn btn-sm status-btn {{ $item->status ? 'btn-success' : 'btn-danger' }} mt-2 status-button"
+                                            data-user-id="{{ $item->id }}" data-status="{{ $item->status }}">
+                                            <i class='bx {{ $item->status ? 'bx-check-circle' : 'bx-x-circle' }}'></i>
+                                            {{ $item->status ? 'Deactivate' : 'Activate' }}
+                                        </button>
                                     </td>
 
                                 </tr>
-
                             @endforeach
 
                         </tbody>
@@ -82,31 +89,47 @@
 
 
     <script>
-        $(document).ready(function(){
-            $('.status-toggle').on('change', function(){
+        $(document).ready(function() {
+            // Toggle Switch Handler
+            $('.status-toggle').on('change', function() {
                 var userId = $(this).data('user-id');
                 var isChecked = $(this).is(':checked');
 
-                // send an ajax request to update status
+                updateUserStatus(userId, isChecked ? 1 : 0);
+            });
 
+            // Button Click Handler
+            $('.status-button').on('click', function() {
+                var userId = $(this).data('user-id');
+                var currentStatus = $(this).data('status');
+                var newStatus = currentStatus == 1 ? 0 : 1;
+
+                updateUserStatus(userId, newStatus);
+            });
+
+            // Common function to update status
+            function updateUserStatus(userId, status) {
                 $.ajax({
                     url: "{{ route('update.user.status') }}",
                     method: "POST",
                     data: {
-                        user_id : userId,
-                        is_checked: isChecked ? 1 : 0,
-                        _token:"{{ csrf_token() }}"
+                        user_id: userId,
+                        is_checked: status,
+                        _token: "{{ csrf_token() }}"
                     },
-                    success: function(response){
+                    success: function(response) {
                         toastr.success(response.message);
+                        // Reload page to update UI
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
                     },
-                    error:function(){
-                        
+                    error: function(xhr) {
+                        toastr.error('Failed to update status');
+                        console.log(xhr);
                     }
                 });
-            });
+            }
         });
     </script>
-
-
 @endsection

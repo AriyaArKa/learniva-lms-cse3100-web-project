@@ -213,6 +213,14 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/delete/post/{id}', 'DeleteBlogPost')->name('delete.post');
     });
 
+    // Blog Comment All Route 
+    Route::controller(BlogController::class)->group(function () {
+        Route::get('/pending/comment', 'AdminPendingComment')->name('pending.comment');
+        Route::get('/approved/comment', 'AdminApprovedComment')->name('approved.comment');
+        Route::get('/approve/comment/{id}', 'ApproveComment')->name('approve.comment');
+        Route::get('/delete/comment/{id}', 'DeleteComment')->name('delete.comment');
+    });
+
     // Permission All Route 
     Route::controller(RoleController::class)->group(function () {
         Route::get('/all/permission', 'AllPermission')->name('all.permission');
@@ -398,6 +406,7 @@ Route::post('/store/review', [ReviewController::class, 'StoreReview'])->name('st
 Route::get('/blog/details/{slug}', [BlogController::class, 'BlogDetails']);
 Route::get('/blog/cat/list/{id}', [BlogController::class, 'BlogCatList']);
 Route::get('/blog', [BlogController::class, 'BlogList'])->name('blog');
+Route::post('/blog/comment/store', [BlogController::class, 'StoreComment'])->name('blog.comment.store');
 
 
 
