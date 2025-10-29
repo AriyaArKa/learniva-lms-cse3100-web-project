@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\BlogCategory;
 use App\Models\BlogPost;
 use App\Models\BlogComment;
+use App\Models\SiteSetting;
 use Intervention\Image\Laravel\Facades\Image;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -242,7 +243,11 @@ class BlogController extends Controller
         $tags_all = $tags ? explode(',', $tags) : [];
         $bcategory = BlogCategory::latest()->get();
         $post = BlogPost::latest()->limit(3)->get();
-        return view('frontend.blog.blog_details', compact('blog', 'tags_all', 'bcategory', 'post'));
+        
+        // Get admin user (role = 'admin')
+        $admin = \App\Models\User::where('role', 'admin')->first();
+        
+        return view('frontend.blog.blog_details', compact('blog', 'tags_all', 'bcategory', 'post', 'admin'));
 
     }// End Method 
 

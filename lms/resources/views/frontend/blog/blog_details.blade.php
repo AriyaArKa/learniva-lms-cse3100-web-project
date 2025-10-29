@@ -5,7 +5,7 @@
 @endsection
 
 <style>
-    /* Fix for bullet points display */
+    /* Fix for bullet points display in breadcrumb */
     .generic-list-item--bullet li {
         padding-left: 0 !important;
     }
@@ -14,6 +14,151 @@
         content: "•";
         margin: 0 8px;
         color: #666;
+    }
+
+    /* Fix for bullet points and formatting in blog content */
+    .blog-content ul {
+        list-style-type: disc !important;
+        margin-left: 20px !important;
+        padding-left: 20px !important;
+        margin-bottom: 15px !important;
+    }
+
+    .blog-content ol {
+        list-style-type: decimal !important;
+        margin-left: 20px !important;
+        padding-left: 20px !important;
+        margin-bottom: 15px !important;
+    }
+
+    .blog-content ul li,
+    .blog-content ol li {
+        display: list-item !important;
+        margin-bottom: 10px !important;
+        line-height: 1.6 !important;
+    }
+
+    .blog-content ul ul {
+        list-style-type: circle !important;
+        margin-top: 10px !important;
+    }
+
+    .blog-content ul ul ul {
+        list-style-type: square !important;
+    }
+
+    .blog-content p {
+        margin-bottom: 15px !important;
+        line-height: 1.7 !important;
+    }
+
+    .blog-content h1 {
+        font-size: 2rem !important;
+        margin-top: 25px !important;
+        margin-bottom: 15px !important;
+        font-weight: 600 !important;
+    }
+
+    .blog-content h2 {
+        font-size: 1.75rem !important;
+        margin-top: 25px !important;
+        margin-bottom: 15px !important;
+        font-weight: 600 !important;
+    }
+
+    .blog-content h3 {
+        font-size: 1.5rem !important;
+        margin-top: 20px !important;
+        margin-bottom: 12px !important;
+        font-weight: 600 !important;
+    }
+
+    .blog-content h4 {
+        font-size: 1.25rem !important;
+        margin-top: 20px !important;
+        margin-bottom: 12px !important;
+        font-weight: 600 !important;
+    }
+
+    .blog-content h5,
+    .blog-content h6 {
+        font-size: 1.1rem !important;
+        margin-top: 15px !important;
+        margin-bottom: 10px !important;
+        font-weight: 600 !important;
+    }
+
+    .blog-content blockquote {
+        border-left: 4px solid #ddd;
+        padding-left: 15px;
+        margin: 20px 0;
+        font-style: italic;
+        color: #666;
+    }
+
+    .blog-content code {
+        background-color: #f4f4f4;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: monospace;
+        font-size: 0.9em;
+    }
+
+    .blog-content pre {
+        background-color: #f4f4f4;
+        padding: 15px;
+        border-radius: 5px;
+        overflow-x: auto;
+        margin: 15px 0;
+    }
+
+    .blog-content pre code {
+        background-color: transparent;
+        padding: 0;
+    }
+
+    .blog-content img {
+        max-width: 100%;
+        height: auto;
+        margin: 15px 0;
+        border-radius: 5px;
+    }
+
+    .blog-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+    }
+
+    .blog-content table th,
+    .blog-content table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+    }
+
+    .blog-content table th {
+        background-color: #f4f4f4;
+        font-weight: 600;
+    }
+
+    .blog-content a {
+        color: #007bff;
+        text-decoration: underline;
+    }
+
+    .blog-content a:hover {
+        color: #0056b3;
+    }
+
+    .blog-content strong,
+    .blog-content b {
+        font-weight: 700;
+    }
+
+    .blog-content em,
+    .blog-content i {
+        font-style: italic;
     }
 </style>
 
@@ -56,7 +201,9 @@
             <div class="col-lg-8 mb-5">
                 <div class="card card-item">
                     <div class="card-body">
-                        <p class="card-text pb-3"> {!! $blog->long_descp !!} </p>
+                        <div class="card-text pb-3 blog-content">
+                            {!! $blog->long_descp !!}
+                        </div>
 
 
 
@@ -93,11 +240,15 @@
                     <h3 class="fs-22 font-weight-semi-bold pb-4">About the author</h3>
                     <div class="media media-card">
                         <div class="media-img rounded-full avatar-lg mr-4">
-                            <img src="{{ asset('upload/no_image.jpg') }}" alt="Avatar image" class="rounded-full">
+                            @if($admin && !empty($admin->photo))
+                                <img src="{{ asset('upload/admin_images/'.$admin->photo) }}" alt="Admin Avatar" class="rounded-full">
+                            @else
+                                <img src="{{ asset('upload/no_image.jpg') }}" alt="Avatar image" class="rounded-full">
+                            @endif
                         </div>
                         <div class="media-body">
-                            <h5>Admin</h5>
-                            <span class="d-block lh-18 pt-2 pb-2">www.algooasis.com</span>
+                            <h5>{{ $admin->name ?? 'Admin' }}</h5>
+                            <span class="d-block lh-18 pt-2 pb-2">{{ $admin->email ?? 'admin@algooasis.com' }}</span>
                             <p class="pb-3">Content creator and educator passionate about sharing knowledge and
                                 helping students learn effectively through engaging blog posts and tutorials.</p>
                             <ul class="social-icons social-icons-styled social--icons-styled">
