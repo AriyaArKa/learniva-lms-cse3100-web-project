@@ -34,7 +34,7 @@ Added Gemini AI integration to the chat system. Users can now trigger AI respons
 ### 4. **Environment Configuration**
 
 -   Added `GEMINI_API_KEY` to `.env` file
--   API Key: `AIzaSyBwlJ7lb7IrJQTS9ADwYrocUtGyKLsuPaM`
+-   Configure your own API Key from [Google AI Studio](https://aistudio.google.com/app/apikey)
 
 ## How It Works
 

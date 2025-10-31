@@ -12,7 +12,7 @@ class GeminiService
 
     public function __construct()
     {
-        $this->apiKey = env('GEMINI_API_KEY', 'AIzaSyBwlJ7lb7IrJQTS9ADwYrocUtGyKLsuPaM');
+        $this->apiKey = env('GEMINI_API_KEY');
         // Using Gemini 2.0 Flash (experimental) - working model
         $this->apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent';
     }
